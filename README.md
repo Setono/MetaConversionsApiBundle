@@ -21,9 +21,9 @@ manually to `bundles.php` instead.
 
 TODO
 
-[ico-version]: https://poser.pugx.org/setono/twig-cache-purger-bundle/v/stable
-[ico-license]: https://poser.pugx.org/setono/twig-cache-purger-bundle/license
-[ico-github-actions]: https://github.com/Setono/TwigCachePurgerBundle/workflows/build/badge.svg
+[ico-version]: https://poser.pugx.org/setono/meta-conversions-api-bundle/v/stable
+[ico-license]: https://poser.pugx.org/setono/meta-conversions-api-bundle/license
+[ico-github-actions]: https://github.com/Setono/MetaConversionsApiBundle/workflows/build/badge.svg
 
-[link-packagist]: https://packagist.org/packages/setono/twig-cache-purger-bundle
-[link-github-actions]: https://github.com/Setono/TwigCachePurgerBundle/actions
+[link-packagist]: https://packagist.org/packages/setono/meta-conversions-api-bundle
+[link-github-actions]: https://github.com/Setono/MetaConversionsApiBundle/actions
