@@ -14,8 +14,23 @@ final class ConversionApiEventRaised extends StoppableEvent
 {
     public Event $event;
 
-    public function __construct(Event $event)
+    /** @var array<string, mixed> */
+    public array $context;
+
+    /**
+     * @param array<string, mixed> $context
+     */
+    public function __construct(Event $event, array $context = [])
     {
         $this->event = $event;
+        $this->context = $context;
+    }
+
+    /**
+     * @psalm-assert-if-true mixed $this->context[$key]
+     */
+    public function hasContext(string $key): bool
+    {
+        return array_key_exists($key, $this->context);
     }
 }
