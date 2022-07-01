@@ -4,6 +4,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="setono_meta_conversions_api.client.default"
-                 class="Setono\MetaConversionsApiBundle\Client\Client"/>
+                 class="Setono\MetaConversionsApiBundle\Client\Client">
+            <argument type="service" id="http_client"/>
+            <argument type="service" id="setono_meta_conversions_api.serializer.default"/>
+            <argument>default access token</argument><!-- todo -->
+        </service>
     </services>
 </container>
