@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\Client;
@@ -13,6 +14,5 @@ final class Client implements ClientInterface
 
     public function sendEvent(Event $event): void
     {
-
     }
 }

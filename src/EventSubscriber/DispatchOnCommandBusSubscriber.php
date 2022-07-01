@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class DispatchEventSubscriber implements EventSubscriberInterface
+final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
 {
     private MessageBusInterface $commandBus;
 
@@ -26,6 +27,6 @@ final class DispatchEventSubscriber implements EventSubscriberInterface
 
     public function dispatch(ConversionApiEventRaised $event): void
     {
-        $this->commandBus->dispatch(new SendFacebookEvent($event->facebookEvent));
+        $this->commandBus->dispatch(new SendEvent($event->event));
     }
 }

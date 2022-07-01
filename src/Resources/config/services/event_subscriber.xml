@@ -4,15 +4,15 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="setono_meta_conversions_api.event_subscriber.dispatch"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchEventSubscriber">
-            <argument type="service" id="request_stack"/>
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
+            <argument type="service" id="setono_meta_conversions_api.command_bus"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="setono_meta_conversions_api.event_subscriber.filter_bots"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterBotsSubscriber">
-            <argument type="service" id="request_stack"/>
+            <argument type="service" id="setono_bot_detection.bot_detector.default"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>

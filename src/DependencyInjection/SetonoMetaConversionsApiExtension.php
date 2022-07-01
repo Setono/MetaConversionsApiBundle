@@ -7,9 +7,10 @@ namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-final class SetonoMetaConversionsApiExtension extends Extension
+final class SetonoMetaConversionsApiExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -17,5 +18,16 @@ final class SetonoMetaConversionsApiExtension extends Extension
 
         /** @psalm-suppress ReservedWord */
         $loader->load('services.xml');
+    }
+
+    public function prepend(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('framework', [
+            'messenger' => [
+                'buses' => [
+                    'setono_meta_conversions_api.command_bus' => null,
+                ],
+            ],
+        ]);
     }
 }

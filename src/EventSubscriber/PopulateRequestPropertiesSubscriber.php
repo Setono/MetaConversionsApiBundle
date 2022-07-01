@@ -30,7 +30,7 @@ final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterf
     public function populate(ConversionApiEventRaised $event): void
     {
         $request = $this->getMainRequestFromRequestStack($this->requestStack);
-        if(null === $request) {
+        if (null === $request) {
             return;
         }
 
