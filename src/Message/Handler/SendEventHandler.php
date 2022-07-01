@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\Message\Handler;
 
-use Setono\MetaConversionsApiBundle\Client\ClientInterface;
+use Setono\MetaConversionsApi\Client\ClientInterface;
 use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 

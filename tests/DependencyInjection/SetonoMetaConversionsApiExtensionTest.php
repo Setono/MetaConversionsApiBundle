@@ -10,7 +10,7 @@ use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApi
 /**
  * @covers \Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension
  */
-final class SetonoTwigCachePurgerExtensionTest extends AbstractExtensionTestCase
+final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestCase
 {
     protected function getContainerExtensions(): array
     {
