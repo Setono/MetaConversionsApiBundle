@@ -7,7 +7,7 @@ namespace Setono\MetaConversionsApiBundle\Message\Command;
 use Setono\MetaConversionsApi\Event\Event;
 
 /**
- * Send a conversion api event to Facebook
+ * Send a conversion api event to Meta/Facebook
  */
 final class SendEvent
 {

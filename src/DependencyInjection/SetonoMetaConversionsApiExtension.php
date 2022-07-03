@@ -14,9 +14,16 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
+        /**
+         * @psalm-suppress PossiblyNullArgument
+         *
+         * @var array{pixels: array<array-key, array{id: string, access_token: string}>} $config
+         */
+        $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
-        /** @psalm-suppress ReservedWord */
+        $container->setParameter('setono_meta_conversions_api.pixels', $config['pixels']);
+
         $loader->load('services.xml');
     }
 

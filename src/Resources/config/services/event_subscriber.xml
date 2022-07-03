@@ -17,9 +17,24 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.populate_fbp_and_fbc_properties"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateFbpAndFbcPropertiesSubscriber">
+            <argument type="service" id="setono_meta_conversions_api.context.fbp"/>
+            <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.populate_request_properties"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateRequestPropertiesSubscriber">
             <argument type="service" id="request_stack"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="setono_meta_conversions_api.event_subscriber.store_facebook_click_id"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFacebookClickIdSubscriber">
+            <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
