@@ -5,5 +5,8 @@
     <services>
         <service id="setono_meta_conversions_api.generator.fbc_generator"
                  class="Setono\MetaConversionsApi\Generator\FbcGenerator"/>
+
+        <service id="setono_meta_conversions_api.generator.fbp_generator"
+                 class="Setono\MetaConversionsApi\Generator\FbpGenerator"/>
     </services>
 </container>

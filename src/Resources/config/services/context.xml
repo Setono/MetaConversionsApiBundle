@@ -3,6 +3,7 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <!-- fbc contexts -->
         <service id="Setono\MetaConversionsApiBundle\Context\FbcContextInterface"
                  alias="setono_meta_conversions_api.context.fbc"/>
 
@@ -20,6 +21,31 @@
             <argument type="service" id="setono_meta_conversions_api.context.query_based_fbc.inner"/>
             <argument type="service" id="request_stack"/>
             <argument type="service" id="setono_meta_conversions_api.generator.fbc_generator"/>
+        </service>
+
+        <!-- fbp contexts -->
+        <service id="Setono\MetaConversionsApiBundle\Context\FbpContextInterface"
+                 alias="setono_meta_conversions_api.context.fbp"/>
+
+        <service id="setono_meta_conversions_api.context.fbp"
+                 alias="setono_meta_conversions_api.context.generated_fbp"/>
+
+        <service id="setono_meta_conversions_api.context.generated_fbp"
+                 class="Setono\MetaConversionsApiBundle\Context\GeneratedFbpContext">
+            <argument type="service" id="setono_meta_conversions_api.generator.fbp_generator"/>
+        </service>
+
+        <service id="setono_meta_conversions_api.context.cached_fbp"
+                 class="Setono\MetaConversionsApiBundle\Context\CachedFbpContext"
+                 decorates="setono_meta_conversions_api.context.fbp" decoration-priority="32">
+            <argument type="service" id="setono_meta_conversions_api.context.cached_fbp.inner"/>
+        </service>
+
+        <service id="setono_meta_conversions_api.context.cookie_based_fbp"
+                 class="Setono\MetaConversionsApiBundle\Context\CookieBasedFbpContext"
+                 decorates="setono_meta_conversions_api.context.fbp" decoration-priority="64">
+            <argument type="service" id="setono_meta_conversions_api.context.cookie_based_fbp.inner"/>
+            <argument type="service" id="request_stack"/>
         </service>
     </services>
 </container>
