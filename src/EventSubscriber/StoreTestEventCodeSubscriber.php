@@ -16,7 +16,7 @@ final class StoreTestEventCodeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => ['store', 1100],
+            KernelEvents::REQUEST => 'store',
         ];
     }
 
