@@ -28,7 +28,7 @@ final class StoreTestEventCodeSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        $testEventCode = $request->query->get('testEventCode') ?? $request->query->get('test_event_code');
+        $testEventCode = $request->query->get('_testEventCode') ?? $request->query->get('_test_event_code');
         if (!is_string($testEventCode)) {
             return;
         }
