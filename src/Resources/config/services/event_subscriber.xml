@@ -32,10 +32,22 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.populate_test_event_code_property"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateTestEventCodePropertySubscriber">
+            <argument type="service" id="request_stack"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.store_facebook_click_id"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFacebookClickIdSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
 
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="setono_meta_conversions_api.event_subscriber.store_test_event_code"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>
