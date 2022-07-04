@@ -25,6 +25,13 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.populate_pixels"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulatePixelsSubscriber">
+            <argument type="service" id="setono_meta_conversions_api.pixel_provider.default"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.populate_request_properties"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateRequestPropertiesSubscriber">
             <argument type="service" id="request_stack"/>
