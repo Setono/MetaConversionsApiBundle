@@ -47,8 +47,10 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->getResponse()->headers->setCookie(
-            Cookie::create(self::COOKIE_NAME, $this->fbpContext->getFbp(), new \DateTimeImmutable('+90 days'))
-        );
+        $cookie = Cookie::create(self::COOKIE_NAME, $this->fbpContext->getFbp(), new \DateTimeImmutable('+90 days'))
+            ->withHttpOnly(false)
+        ;
+
+        $event->getResponse()->headers->setCookie($cookie);
     }
 }
