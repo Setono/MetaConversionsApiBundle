@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * See https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/fbp-and-fbc/#fbc
  */
-final class StoreFacebookClickIdSubscriber implements EventSubscriberInterface
+final class StoreFbcSubscriber implements EventSubscriberInterface
 {
     use MainRequestTrait;
 

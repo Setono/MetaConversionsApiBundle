@@ -46,9 +46,16 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.store_facebook_click_id"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFacebookClickIdSubscriber">
+        <service id="setono_meta_conversions_api.event_subscriber.store_fbc"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <service id="setono_meta_conversions_api.event_subscriber.store_fbp"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber">
+            <argument type="service" id="setono_meta_conversions_api.context.fbp"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
