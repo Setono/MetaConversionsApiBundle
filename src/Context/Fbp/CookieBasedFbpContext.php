@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\MetaConversionsApiBundle\Context;
+namespace Setono\MetaConversionsApiBundle\Context\Fbp;
 
 use Setono\MainRequestTrait\MainRequestTrait;
 use Symfony\Component\HttpFoundation\RequestStack;

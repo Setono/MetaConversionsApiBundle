@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\MetaConversionsApiBundle\Context;
+namespace Setono\MetaConversionsApiBundle\Context\Fbp;
 
 interface FbpContextInterface
 {

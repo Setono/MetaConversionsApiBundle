@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MainRequestTrait\MainRequestTrait;
-use Setono\MetaConversionsApiBundle\Context\FbpContextInterface;
+use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;

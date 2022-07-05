@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MetaConversionsApiBundle\Context\FbcContextInterface;
-use Setono\MetaConversionsApiBundle\Context\FbpContextInterface;
+use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

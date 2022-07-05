@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MainRequestTrait\MainRequestTrait;
-use Setono\MetaConversionsApiBundle\Context\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
