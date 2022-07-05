@@ -11,7 +11,6 @@
     ],
     "require": {
         "php": ">=7.4",
-        "ext-filter": "*",
         "setono/bot-detection-bundle": "^1.7",
         "setono/meta-conversions-api-php-sdk": "dev-master",
         "setono/symfony-main-request-trait": "^1.0",
@@ -19,13 +18,10 @@
         "symfony/dependency-injection": "^4.4 || ^5.4 || ^6.0",
         "symfony/event-dispatcher": "^4.4 || ^5.4 || ^6.0",
         "symfony/event-dispatcher-contracts": "^1.1 || ^2.5 || ^3.1",
-        "symfony/http-client": "^4.4 || ^5.4 || ^6.0",
-        "symfony/http-client-contracts": "^1.1 || ^2.5 || ^3.1",
         "symfony/http-foundation": "^4.4 || ^5.4 || ^6.0",
         "symfony/http-kernel": "^4.4 || ^5.4 || ^6.0",
         "symfony/messenger": "^4.4 || ^5.4 || ^6.0",
-        "symfony/monolog-bundle": "^2.12 || ^3.8",
-        "symfony/uid": "^5.4 || ^6.0"
+        "symfony/monolog-bundle": "^2.12 || ^3.8"
     },
     "require-dev": {
         "matthiasnoback/symfony-dependency-injection-test": "^4.3",
