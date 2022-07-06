@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\Context\Fbp;
 
 use Setono\MainRequestTrait\MainRequestTrait;
+use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbpContext implements FbpContextInterface
@@ -21,7 +22,7 @@ final class CookieBasedFbpContext implements FbpContextInterface
         $this->requestStack = $requestStack;
     }
 
-    public function getFbp(): string
+    public function getFbp(): Fbp
     {
         $request = $this->getMainRequestFromRequestStack($this->requestStack);
         if (null === $request) {
@@ -29,7 +30,13 @@ final class CookieBasedFbpContext implements FbpContextInterface
         }
 
         $fbp = $request->cookies->get('_fbp');
+        if (is_string($fbp)) {
+            try {
+                return Fbp::fromString($fbp);
+            } catch (\InvalidArgumentException $e) {
+            }
+        }
 
-        return is_string($fbp) ? $fbp : $this->decorated->getFbp();
+        return $this->decorated->getFbp();
     }
 }

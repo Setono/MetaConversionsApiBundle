@@ -50,6 +50,10 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->getResponse()->headers->setCookie(Cookie::create('_fbc', $fbc, new \DateTimeImmutable('+90 days')));
+        $event->getResponse()->headers->setCookie(Cookie::create(
+            '_fbc',
+            $fbc->value(),
+            new \DateTimeImmutable('+90 days')
+        ));
     }
 }

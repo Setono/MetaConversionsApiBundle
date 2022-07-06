@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MainRequestTrait\MainRequestTrait;
+use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -42,15 +44,33 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             return;
         }
 
-        // only store the cookie if the cookie hasn't been set before
-        if ($event->getRequest()->cookies->has(self::COOKIE_NAME)) {
+        $fbp = $this->fbpContext->getFbp();
+
+        if (!$this->setCookie($event->getRequest(), $fbp)) {
             return;
         }
 
-        $cookie = Cookie::create(self::COOKIE_NAME, $this->fbpContext->getFbp(), new \DateTimeImmutable('+90 days'))
+        $cookie = Cookie::create(
+            self::COOKIE_NAME,
+            $fbp->value(),
+            new \DateTimeImmutable('+90 days')
+        )
             ->withHttpOnly(false)
         ;
 
         $event->getResponse()->headers->setCookie($cookie);
+    }
+
+    /**
+     * Returns true if the cookie should be created/updated
+     */
+    private function setCookie(Request $request, Fbp $fbp): bool
+    {
+        if (!$request->cookies->has(self::COOKIE_NAME)) {
+            return true;
+        }
+
+        // if the creation time of the cookie is more than 2 hours ago, we will renew its expiry date
+        return $fbp->getCreationTimeAsSeconds() < (time() - 7200);
     }
 }

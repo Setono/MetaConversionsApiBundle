@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 
 use Setono\MainRequestTrait\MainRequestTrait;
-use Setono\MetaConversionsApi\Generator\FbcGeneratorInterface;
+use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class QueryBasedFbcContext implements FbcContextInterface
@@ -16,16 +16,13 @@ final class QueryBasedFbcContext implements FbcContextInterface
 
     private RequestStack $requestStack;
 
-    private FbcGeneratorInterface $fbcGenerator;
-
-    public function __construct(FbcContextInterface $decorated, RequestStack $requestStack, FbcGeneratorInterface $fbcGenerator)
+    public function __construct(FbcContextInterface $decorated, RequestStack $requestStack)
     {
         $this->decorated = $decorated;
         $this->requestStack = $requestStack;
-        $this->fbcGenerator = $fbcGenerator;
     }
 
-    public function getFbc(): ?string
+    public function getFbc(): ?Fbc
     {
         $request = $this->getMainRequestFromRequestStack($this->requestStack);
         if (null === $request) {
@@ -37,6 +34,6 @@ final class QueryBasedFbcContext implements FbcContextInterface
             return $this->decorated->getFbc();
         }
 
-        return $this->fbcGenerator->generate($facebookClickId);
+        return new Fbc($facebookClickId);
     }
 }

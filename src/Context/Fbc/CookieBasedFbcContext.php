@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 
 use Setono\MainRequestTrait\MainRequestTrait;
+use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbcContext implements FbcContextInterface
@@ -18,7 +19,7 @@ final class CookieBasedFbcContext implements FbcContextInterface
         $this->requestStack = $requestStack;
     }
 
-    public function getFbc(): ?string
+    public function getFbc(): ?Fbc
     {
         $request = $this->getMainRequestFromRequestStack($this->requestStack);
         if (null === $request) {
@@ -26,7 +27,13 @@ final class CookieBasedFbcContext implements FbcContextInterface
         }
 
         $fbc = $request->cookies->get('_fbc');
+        if (is_string($fbc)) {
+            try {
+                return Fbc::fromString($fbc);
+            } catch (\InvalidArgumentException $e) {
+            }
+        }
 
-        return is_string($fbc) ? $fbc : null;
+        return null;
     }
 }
