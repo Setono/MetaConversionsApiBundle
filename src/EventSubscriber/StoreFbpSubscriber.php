@@ -70,7 +70,8 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             return true;
         }
 
-        // if the creation time of the cookie is more than 2 hours ago, we will renew its expiry date
+        // If the creation time of the cookie is more than 2 hours ago, we will renew its expiry date
+        // Meta/Facebook does something similar
         return $fbp->getCreationTimeAsSeconds() < (time() - 7200);
     }
 }
