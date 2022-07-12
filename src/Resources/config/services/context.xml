@@ -26,7 +26,6 @@
                  decorates="setono_meta_conversions_api.context.fbc" decoration-priority="64">
             <argument type="service" id="setono_meta_conversions_api.context.fbc.query_based.inner"/>
             <argument type="service" id="request_stack"/>
-            <argument type="service" id="setono_meta_conversions_api.generator.fbc_generator"/>
         </service>
 
         <!-- fbp contexts -->
@@ -38,7 +37,6 @@
 
         <service id="setono_meta_conversions_api.context.fbp.generated"
                  class="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext">
-            <argument type="service" id="setono_meta_conversions_api.generator.fbp_generator"/>
         </service>
 
         <service id="setono_meta_conversions_api.context.fbp.cached"

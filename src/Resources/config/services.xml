@@ -9,6 +9,5 @@
         <import resource="services/generator.xml"/>
         <import resource="services/message.xml"/>
         <import resource="services/provider.xml"/>
-        <import resource="services/serializer.xml"/>
     </imports>
 </container>
