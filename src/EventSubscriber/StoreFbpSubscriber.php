@@ -55,7 +55,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             $fbp->value(),
             new \DateTimeImmutable('+90 days')
         )
-            ->withHttpOnly(false)
+            ->withHttpOnly(false) // we need this to allow the js library to also use the cookie value
         ;
 
         $event->getResponse()->headers->setCookie($cookie);
