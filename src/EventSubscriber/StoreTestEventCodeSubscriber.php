@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 final class StoreTestEventCodeSubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     public static function getSubscribedEvents(): array
     {
         return [
@@ -22,7 +19,7 @@ final class StoreTestEventCodeSubscriber implements EventSubscriberInterface
 
     public function store(RequestEvent $event): void
     {
-        if (!$this->isMainRequest($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -18,8 +17,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class StoreFbcSubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     private FbcContextInterface $fbcContext;
 
     public function __construct(FbcContextInterface $fbcContext)
@@ -36,7 +33,7 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
 
     public function store(ResponseEvent $event): void
     {
-        if (!$this->isMainRequest($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

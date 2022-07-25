@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     private RequestStack $requestStack;
 
     public function __construct(RequestStack $requestStack)
@@ -29,7 +26,7 @@ final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterf
 
     public function populate(ConversionApiEventRaised $event): void
     {
-        $request = $this->getMainRequestFromRequestStack($this->requestStack);
+        $request = $this->requestStack->getMainRequest();
         if (null === $request) {
             return;
         }

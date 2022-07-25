@@ -4,14 +4,11 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class QueryBasedFbcContext implements FbcContextInterface
 {
-    use MainRequestTrait;
-
     private FbcContextInterface $decorated;
 
     private RequestStack $requestStack;
@@ -24,7 +21,7 @@ final class QueryBasedFbcContext implements FbcContextInterface
 
     public function getFbc(): ?Fbc
     {
-        $request = $this->getMainRequestFromRequestStack($this->requestStack);
+        $request = $this->requestStack->getMainRequest();
         if (null === $request) {
             return $this->decorated->getFbc();
         }

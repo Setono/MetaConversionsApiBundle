@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MainRequestTrait\MainRequestTrait;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -20,8 +19,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class StoreFbpSubscriber implements EventSubscriberInterface
 {
-    use MainRequestTrait;
-
     private const COOKIE_NAME = '_fbp';
 
     private FbpContextInterface $fbpContext;
@@ -40,7 +37,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
 
     public function store(ResponseEvent $event): void
     {
-        if (!$this->isMainRequest($event)) {
+        if (!$event->isMainRequest()) {
             return;
         }
 
