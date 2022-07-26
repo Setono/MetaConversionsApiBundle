@@ -51,6 +51,6 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
             '_fbc',
             $fbc->value(),
             new \DateTimeImmutable('+90 days')
-        ));
+        )->withHttpOnly(false));  // we need this to allow the js library to also use the cookie value
     }
 }
