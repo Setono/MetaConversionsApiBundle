@@ -3,6 +3,9 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"
+                 alias="setono_meta_conversions_api.generator.fbq"/>
+
         <service id="setono_meta_conversions_api.generator.fbq"
                  class="Setono\MetaConversionsApi\Generator\FbqGenerator"/>
     </services>
