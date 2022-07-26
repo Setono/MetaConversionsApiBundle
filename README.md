@@ -17,6 +17,12 @@ composer require setono/meta-conversions-api-bundle
 This will install the bundle and enable it if you're using Symfony Flex. If you're not using Flex, add the bundle
 manually to `bundles.php` instead.
 
+If you want to handle consent (i.e. cookie/gdpr consent), you can use the [consent bundle](https://github.com/Setono/ConsentBundle), by installing it:
+
+```shell
+composer require setono/consent-bundle
+```
+
 ## Usage
 
 ```php

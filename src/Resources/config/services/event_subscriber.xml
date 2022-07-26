@@ -6,6 +6,8 @@
         <service id="setono_meta_conversions_api.event_subscriber.dispatch_on_command_bus"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
             <argument type="service" id="setono_meta_conversions_api.command_bus"/>
+            <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
+            <argument>%setono_meta_conversions_api.server_side.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
