@@ -19,7 +19,35 @@ manually to `bundles.php` instead.
 
 ## Usage
 
-TODO
+```php
+<?php
+
+declare(strict_types=1);
+
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Setono\MetaConversionsApi\Event\Event;
+use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+
+final class YourService
+{
+    private EventDispatcherInterface $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function track(): void
+    {
+        $event = new Event(Event::EVENT_VIEW_CONTENT);
+        $event->customData->contentType = 'product';
+        $event->customData->contentName = 'Blue Jeans';
+        $event->customData->contentIds[] = 'PRODUCT_SKU';
+
+        $this->eventDispatcher->dispatch(new ConversionApiEventRaised($event));
+    }
+}
+```
 
 [ico-version]: https://poser.pugx.org/setono/meta-conversions-api-bundle/v/stable
 [ico-license]: https://poser.pugx.org/setono/meta-conversions-api-bundle/license
