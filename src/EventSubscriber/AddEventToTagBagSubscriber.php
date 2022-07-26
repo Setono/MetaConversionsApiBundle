@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\Consent\Context\ConsentContextInterface;
+use Setono\MetaConversionsApi\Event\Parameters;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Tag\FbqInitTag;
 use Setono\TagBag\Tag\ContentAwareTag;
 use Setono\TagBag\TagBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class AddToTagBagSubscriber implements EventSubscriberInterface
+final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 {
     private ?TagBagInterface $tagBag;
 
@@ -51,12 +53,14 @@ final class AddToTagBagSubscriber implements EventSubscriberInterface
         }
 
         $this->tagBag->add(
-            ContentAwareTag::create($this->fbqGenerator->generateInit($event->event, true))
-                ->withPriority(100)
+            FbqInitTag::create($this->fbqGenerator->generateInit(
+                $event->event->pixels,
+                $event->event->userData->getPayload(Parameters::PAYLOAD_CONTEXT_BROWSER)
+            ))->withPriority(100)
         );
 
         $this->tagBag->add(
-            ContentAwareTag::create($this->fbqGenerator->generateTrack($event->event, true))
+            ContentAwareTag::create($this->fbqGenerator->generateTrack($event->event))
         );
     }
 }

@@ -7,6 +7,10 @@
                  alias="setono_meta_conversions_api.generator.fbq"/>
 
         <service id="setono_meta_conversions_api.generator.fbq"
-                 class="Setono\MetaConversionsApi\Generator\FbqGenerator"/>
+                 class="Setono\MetaConversionsApi\Generator\FbqGenerator">
+            <call method="setLogger">
+                <argument type="service" id="logger"/>
+            </call>
+        </service>
     </services>
 </container>
