@@ -3,6 +3,16 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="setono_meta_conversions_api.event_subscriber.add_to_tag_bag"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\AddToTagBagSubscriber">
+            <argument type="service" id="setono_tag_bag.tag_bag" on-invalid="null"/>
+            <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
+            <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
+            <argument>%setono_meta_conversions_api.client_side.enabled%</argument>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.dispatch_on_command_bus"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
             <argument type="service" id="setono_meta_conversions_api.command_bus"/>

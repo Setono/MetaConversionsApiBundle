@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 
+use Setono\TagBagBundle\SetonoTagBagBundle;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -21,7 +22,7 @@ final class Configuration implements ConfigurationInterface
             ->children()
                 ->arrayNode('client_side')
                     ->info('Configuration for client side tracking')
-                    ->canBeDisabled()
+                    ->{class_exists(SetonoTagBagBundle::class) ? 'canBeDisabled' : 'canBeEnabled'}()
                 ->end()
                 ->arrayNode('server_side')
                     ->info('Configuration for server side tracking')
