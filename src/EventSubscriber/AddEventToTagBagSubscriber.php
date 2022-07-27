@@ -9,7 +9,7 @@ use Setono\MetaConversionsApi\Event\Parameters;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
 use Setono\MetaConversionsApiBundle\Tag\FbqInitTag;
-use Setono\TagBag\Tag\ContentAwareTag;
+use Setono\TagBag\Tag\ContentTag;
 use Setono\TagBag\TagBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -60,7 +60,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
         );
 
         $this->tagBag->add(
-            ContentAwareTag::create($this->fbqGenerator->generateTrack($event->event))
+            ContentTag::create($this->fbqGenerator->generateTrack($event->event))
         );
     }
 }
