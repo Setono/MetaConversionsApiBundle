@@ -70,7 +70,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
         $this->tagBag->add(
             // the priority for this one has to be lower than the one in \Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber
             // this way this one will be replaced by the other one if it is added to the tag bag (because of the lower priority)
-            FbqInitTag::create($this->fbqGenerator->generateInit($pixels))->withPriority(50)
+            FbqInitTag::create($this->fbqGenerator->generateInit($pixels), 50)
         );
     }
 }

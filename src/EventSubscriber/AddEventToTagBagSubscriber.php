@@ -56,7 +56,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
             FbqInitTag::create($this->fbqGenerator->generateInit(
                 $event->event->pixels,
                 $event->event->userData->getPayload(Parameters::PAYLOAD_CONTEXT_BROWSER)
-            ))->withPriority(100)
+            ), 100)
         );
 
         $this->tagBag->add(
