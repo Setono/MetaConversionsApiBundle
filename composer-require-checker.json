@@ -15,7 +15,10 @@
         "string",
         "true",
         "void",
-        "apc_compile_file",
-        "opcache_invalidate"
+        "Setono\\TagBagBundle\\SetonoTagBagBundle",
+        "Setono\\TagBag\\Tag\\ContentAwareInterface",
+        "Setono\\TagBag\\Tag\\ContentTag",
+        "Setono\\TagBag\\Tag\\Tag",
+        "Setono\\TagBag\\Tag\\TagInterface"
     ]
 }
