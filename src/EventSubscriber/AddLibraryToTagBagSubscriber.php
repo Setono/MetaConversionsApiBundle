@@ -27,18 +27,22 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 
     private bool $clientSideEnabled;
 
+    private bool $consentEnabled;
+
     public function __construct(
         ?TagBagInterface $tagBag,
         FbqGeneratorInterface $fbqGenerator,
         ?ConsentContextInterface $consentContext,
         PixelProviderInterface $pixelProvider,
-        bool $clientSideEnabled
+        bool $clientSideEnabled,
+        bool $consentEnabled
     ) {
         $this->tagBag = $tagBag;
         $this->fbqGenerator = $fbqGenerator;
         $this->consentContext = $consentContext;
         $this->pixelProvider = $pixelProvider;
         $this->clientSideEnabled = $clientSideEnabled;
+        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array
@@ -54,7 +58,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
+        if ($this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
             return;
         }
 

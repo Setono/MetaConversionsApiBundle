@@ -22,8 +22,13 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
     /**
      * @test
      */
-    public function it_registers_services(): void
+    public function it_sets_parameters(): void
     {
         $this->load();
+
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.consent.enabled', false);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.client_side.enabled', true);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);
     }
 }

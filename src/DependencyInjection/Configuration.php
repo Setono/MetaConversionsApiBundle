@@ -20,6 +20,10 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
+                ->arrayNode('consent')
+                    ->info('If enabled, the bundle will only track events if a consent is granted')
+                    ->canBeEnabled()
+                ->end()
                 ->arrayNode('client_side')
                     ->info('Configuration for client side tracking')
                     ->{class_exists(SetonoTagBagBundle::class) ? 'canBeDisabled' : 'canBeEnabled'}()

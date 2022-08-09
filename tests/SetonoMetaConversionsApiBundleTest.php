@@ -7,7 +7,6 @@ namespace Setono\MetaConversionsApiBundle\Tests;
 use Nyholm\BundleTest\TestKernel;
 use Setono\BotDetectionBundle\SetonoBotDetectionBundle;
 use Setono\MetaConversionsApi\Client\Client;
-use Setono\MetaConversionsApi\Generator\FbqGenerator;
 use Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext;

@@ -18,14 +18,18 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
 
     private bool $serverSideEnabled;
 
+    private bool $consentEnabled;
+
     public function __construct(
         MessageBusInterface $commandBus,
         ?ConsentContextInterface $consentContext,
-        bool $serverSideEnabled
+        bool $serverSideEnabled,
+        bool $consentEnabled
     ) {
         $this->commandBus = $commandBus;
         $this->consentContext = $consentContext;
         $this->serverSideEnabled = $serverSideEnabled;
+        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array
@@ -41,7 +45,7 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
+        if ($this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
             return;
         }
 

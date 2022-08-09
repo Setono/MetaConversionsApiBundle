@@ -9,6 +9,7 @@
             <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
             <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
             <argument>%setono_meta_conversions_api.client_side.enabled%</argument>
+            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -20,6 +21,7 @@
             <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
             <argument type="service" id="setono_meta_conversions_api.pixel_provider.default"/>
             <argument>%setono_meta_conversions_api.client_side.enabled%</argument>
+            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -29,6 +31,7 @@
             <argument type="service" id="setono_meta_conversions_api.command_bus"/>
             <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
             <argument>%setono_meta_conversions_api.server_side.enabled%</argument>
+            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
