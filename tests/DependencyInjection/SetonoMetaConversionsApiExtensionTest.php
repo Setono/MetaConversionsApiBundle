@@ -39,4 +39,17 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);
     }
+
+    /**
+     * @test
+     */
+    public function it_does_not_load_client_side_event_subscribers_when_client_side_is_disabled(): void
+    {
+        $this->load([
+            'client_side' => false,
+        ]);
+
+        $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_event_to_tag_bag');
+        $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_library_to_tag_bag');
+    }
 }
