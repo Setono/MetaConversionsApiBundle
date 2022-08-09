@@ -19,6 +19,7 @@
         "Setono\\TagBag\\Tag\\ContentAwareInterface",
         "Setono\\TagBag\\Tag\\ContentTag",
         "Setono\\TagBag\\Tag\\Tag",
-        "Setono\\TagBag\\Tag\\TagInterface"
+        "Setono\\TagBag\\Tag\\TagInterface",
+        "Setono\\TagBag\\TagBagInterface"
     ]
 }
