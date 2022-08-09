@@ -42,7 +42,7 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
             Assert::keyExists($bundles, 'SetonoTagBagBundle', 'The SetonoTagBagBundle is not in the list of enabled bundles. ' . $exceptionMessage);
 
             Assert::true(InstalledVersions::isInstalled('setono/tag-bag-bundle'), $exceptionMessage);
-            Assert::true(InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0@alpha'), $exceptionMessage);
+            Assert::true(InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0'), $exceptionMessage);
 
             $loader->load('services/conditional/event_subscriber.xml');
         }
