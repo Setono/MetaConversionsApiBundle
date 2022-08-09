@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 
-use Setono\TagBagBundle\SetonoTagBagBundle;
+use Composer\InstalledVersions;
+use Composer\Semver\VersionParser;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -16,6 +17,12 @@ final class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->getRootNode();
 
+        $clientSideDefault = 'canBeEnabled';
+        if (InstalledVersions::isInstalled('setono/tag-bag-bundle')
+            && InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0@alpha')) {
+            $clientSideDefault = 'canBeDisabled';
+        }
+
         /** @psalm-suppress MixedMethodCall, PossiblyUndefinedMethod, PossiblyNullReference */
         $rootNode
             ->addDefaultsIfNotSet()
@@ -26,7 +33,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('client_side')
                     ->info('Configuration for client side tracking')
-                    ->{class_exists(SetonoTagBagBundle::class) ? 'canBeDisabled' : 'canBeEnabled'}()
+                    ->{$clientSideDefault}()
                 ->end()
                 ->arrayNode('server_side')
                     ->info('Configuration for server side tracking')
