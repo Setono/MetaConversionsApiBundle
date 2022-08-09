@@ -55,6 +55,12 @@ final class YourService
 }
 ```
 
+## Test the integration
+
+To test the integration you can set the test event code (that you can retrieve from Meta / Facebooks event manager) and
+append it to any url on your store like so: `https://example.com/?test_event_code=[YOUR TEST EVENT CODE]`. This code is
+saved in a session and hence all your subsequent requests will be sent with the test event code.
+
 [ico-version]: https://poser.pugx.org/setono/meta-conversions-api-bundle/v/stable
 [ico-license]: https://poser.pugx.org/setono/meta-conversions-api-bundle/license
 [ico-github-actions]: https://github.com/Setono/MetaConversionsApiBundle/workflows/build/badge.svg
