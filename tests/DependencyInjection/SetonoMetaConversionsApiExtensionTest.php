@@ -6,6 +6,7 @@ namespace Setono\MetaConversionsApiBundle\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
+use Setono\TagBagBundle\SetonoTagBagBundle;
 
 /**
  * @covers \Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension
@@ -17,6 +18,13 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         return [
             new SetonoMetaConversionsApiExtension(),
         ];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setParameter('kernel.bundles', ['SetonoTagBagBundle' => SetonoTagBagBundle::class]);
     }
 
     /**

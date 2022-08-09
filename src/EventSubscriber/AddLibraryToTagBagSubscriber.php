@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 {
-    private ?TagBagInterface $tagBag;
+    private TagBagInterface $tagBag;
 
     private FbqGeneratorInterface $fbqGenerator;
 
@@ -30,7 +30,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
     private bool $consentEnabled;
 
     public function __construct(
-        ?TagBagInterface $tagBag,
+        TagBagInterface $tagBag,
         FbqGeneratorInterface $fbqGenerator,
         ?ConsentContextInterface $consentContext,
         PixelProviderInterface $pixelProvider,
@@ -54,7 +54,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 
     public function add(RequestEvent $event): void
     {
-        if (!$this->clientSideEnabled || null === $this->tagBag || !$event->isMainRequest()) {
+        if (!$this->clientSideEnabled || !$event->isMainRequest()) {
             return;
         }
 

@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=7.4",
+        "composer-runtime-api": "^2",
         "setono/bot-detection-bundle": "^1.7",
         "setono/meta-conversions-api-php-sdk": "^0.2.1",
         "symfony/config": "^5.4 || ^6.0",
@@ -33,7 +34,8 @@
         "setono/code-quality-pack": "^2.2",
         "setono/consent-bundle": "^0.1.4",
         "setono/tag-bag": "^2.0@alpha",
-        "setono/tag-bag-bundle": "^3.0@alpha"
+        "setono/tag-bag-bundle": "^3.0@alpha",
+        "symfony/twig-bundle": "^5.4"
     },
     "prefer-stable": true,
     "autoload": {

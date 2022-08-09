@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 {
-    private ?TagBagInterface $tagBag;
+    private TagBagInterface $tagBag;
 
     private FbqGeneratorInterface $fbqGenerator;
 
@@ -26,7 +26,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
     private bool $consentEnabled;
 
     public function __construct(
-        ?TagBagInterface $tagBag,
+        TagBagInterface $tagBag,
         FbqGeneratorInterface $fbqGenerator,
         ?ConsentContextInterface $consentContext,
         bool $clientSideEnabled,
@@ -48,7 +48,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 
     public function add(ConversionsApiEventRaised $event): void
     {
-        if (!$this->clientSideEnabled || null === $this->tagBag) {
+        if (!$this->clientSideEnabled) {
             return;
         }
 

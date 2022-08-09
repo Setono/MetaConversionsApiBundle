@@ -24,7 +24,9 @@ use Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler;
 use Setono\MetaConversionsApiBundle\Provider\ConfigurationBasedPixelProvider;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Setono\MetaConversionsApiBundle\SetonoMetaConversionsApiBundle;
+use Setono\TagBagBundle\SetonoTagBagBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Messenger\MessageBus;
 
@@ -43,6 +45,8 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
         $kernel = parent::createKernel($options);
         $kernel->addTestBundle(SetonoMetaConversionsApiBundle::class);
         $kernel->addTestBundle(SetonoBotDetectionBundle::class);
+        $kernel->addTestBundle(SetonoTagBagBundle::class);
+        $kernel->addTestBundle(TwigBundle::class);
         $kernel->handleOptions($options);
 
         return $kernel;
