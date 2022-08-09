@@ -31,7 +31,7 @@
         "psalm/plugin-symfony": "^3.1",
         "roave/security-advisories": "dev-latest",
         "setono/code-quality-pack": "^2.2",
-        "setono/consent-bundle": "^0.1",
+        "setono/consent-bundle": "^0.1.4",
         "setono/tag-bag": "^2.0@alpha",
         "setono/tag-bag-bundle": "^3.0@alpha"
     },
