@@ -4,7 +4,8 @@
 [![Software License][ico-license]](LICENSE)
 [![Build Status][ico-github-actions]][link-github-actions]
 
-Work with the Meta / Facebook Conversions API in your Symfony application
+Work with the Meta / Facebook Conversions API in your Symfony application. Under the hood this bundle integrates the
+[Meta Conversions API PHP SDK](https://github.com/Setono/meta-conversions-api-php-sdk) library.
 
 ## Installation
 
@@ -14,10 +15,9 @@ To install this bundle, simply run:
 composer require setono/meta-conversions-api-bundle
 ```
 
-This will install the bundle and enable it if you're using Symfony Flex. If you're not using Flex, add the bundle
-manually to `bundles.php` instead.
+This also installs the [Bot Detection Bundle](https://github.com/Setono/BotDetectionBundle) which is used to filter bot requests.
 
-If you want to handle consent (i.e. cookie/gdpr consent), you can use the [consent bundle](https://github.com/Setono/ConsentBundle), by installing it:
+If you want to handle consent (i.e. cookie/GDPR consent), you can use the [consent bundle](https://github.com/Setono/ConsentBundle), by installing it:
 
 ```shell
 composer require setono/consent-bundle
