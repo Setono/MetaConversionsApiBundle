@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,11 +21,11 @@ final class PopulateTestEventCodePropertySubscriber implements EventSubscriberIn
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionApiEventRaised::class => ['populate', 800],
+            ConversionsApiEventRaised::class => ['populate', 800],
         ];
     }
 
-    public function populate(ConversionApiEventRaised $event): void
+    public function populate(ConversionsApiEventRaised $event): void
     {
         try {
             $session = $this->requestStack->getSession();

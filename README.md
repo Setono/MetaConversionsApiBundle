@@ -32,7 +32,7 @@ declare(strict_types=1);
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Setono\MetaConversionsApi\Event\Event;
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 
 final class YourService
 {
@@ -50,7 +50,7 @@ final class YourService
         $event->customData->contentName = 'Blue Jeans';
         $event->customData->contentIds[] = 'PRODUCT_SKU';
 
-        $this->eventDispatcher->dispatch(new ConversionApiEventRaised($event));
+        $this->eventDispatcher->dispatch(new ConversionsApiEventRaised($event));
     }
 }
 ```

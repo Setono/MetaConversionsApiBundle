@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event as StoppableEvent;
 /**
  * Dispatch this event onto the EventDispatcher and everything will be handled for you
  */
-final class ConversionApiEventRaised extends StoppableEvent
+final class ConversionsApiEventRaised extends StoppableEvent
 {
     public Event $event;
 

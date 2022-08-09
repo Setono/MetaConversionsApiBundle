@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -20,11 +20,11 @@ final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterf
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionApiEventRaised::class => ['populate', 1000],
+            ConversionsApiEventRaised::class => ['populate', 1000],
         ];
     }
 
-    public function populate(ConversionApiEventRaised $event): void
+    public function populate(ConversionsApiEventRaised $event): void
     {
         $request = $this->requestStack->getMainRequest();
         if (null === $request) {

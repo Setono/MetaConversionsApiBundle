@@ -7,7 +7,7 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 use Setono\Consent\Context\ConsentContextInterface;
 use Setono\MetaConversionsApi\Event\Parameters;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Setono\MetaConversionsApiBundle\Tag\FbqInitTag;
 use Setono\TagBag\Tag\ContentTag;
 use Setono\TagBag\TagBagInterface;
@@ -42,11 +42,11 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionApiEventRaised::class => ['add', -1000],
+            ConversionsApiEventRaised::class => ['add', -1000],
         ];
     }
 
-    public function add(ConversionApiEventRaised $event): void
+    public function add(ConversionsApiEventRaised $event): void
     {
         if (!$this->clientSideEnabled || null === $this->tagBag) {
             return;

@@ -6,7 +6,7 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInterface
@@ -24,11 +24,11 @@ final class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInte
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionApiEventRaised::class => ['populate', 900],
+            ConversionsApiEventRaised::class => ['populate', 900],
         ];
     }
 
-    public function populate(ConversionApiEventRaised $event): void
+    public function populate(ConversionsApiEventRaised $event): void
     {
         $event->event->userData->fbp = $this->fbpContext->getFbp();
         $event->event->userData->fbc = $this->fbcContext->getFbc();

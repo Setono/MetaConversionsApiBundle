@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\BotDetectionBundle\BotDetector\BotDetectorInterface;
-use Setono\MetaConversionsApiBundle\Event\ConversionApiEventRaised;
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class FilterBotsSubscriber implements EventSubscriberInterface
@@ -20,11 +20,11 @@ final class FilterBotsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionApiEventRaised::class => ['filter', -900],
+            ConversionsApiEventRaised::class => ['filter', -900],
         ];
     }
 
-    public function filter(ConversionApiEventRaised $event): void
+    public function filter(ConversionsApiEventRaised $event): void
     {
         if ($this->botDetector->isBotRequest()) {
             $event->stopPropagation();
