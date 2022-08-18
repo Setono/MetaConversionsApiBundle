@@ -49,6 +49,11 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.stop_propagation_if_no_pixels_has_been_added"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StopPropagationIfNoPixelsHasBeenAddedSubscriber">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.store_fbc"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
