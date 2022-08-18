@@ -47,6 +47,13 @@ final class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('filters')
+                    ->children()
+                        ->arrayNode('user_agent')
+                            ->scalarPrototype()->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 
