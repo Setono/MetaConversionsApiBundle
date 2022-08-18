@@ -52,4 +52,21 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_event_to_tag_bag');
         $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_library_to_tag_bag');
     }
+
+    /**
+     * @test
+     */
+    public function it_sets_user_agent_filter(): void
+    {
+        $this->load([
+            'filters' => [
+                'user_agent' => [
+                    'a_robot',
+                    'also_a_robot',
+                ],
+            ],
+        ]);
+
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.filters.user_agent', ['a_robot', 'also_a_robot']);
+    }
 }

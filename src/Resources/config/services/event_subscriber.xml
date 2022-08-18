@@ -20,6 +20,13 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.filter_configured_user_agents"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterConfiguredUserAgentsSubscriber">
+            <argument>%setono_meta_conversions_api.filters.user_agent%</argument>
+
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.filter_empty_user_agent"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber">
             <tag name="kernel.event_subscriber"/>

@@ -20,7 +20,7 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
         /**
          * @psalm-suppress PossiblyNullArgument
          *
-         * @var array{consent: array{enabled: bool}, client_side: array{enabled: bool}, server_side: array{enabled: bool}, pixels: array<array-key, array{id: string, access_token: string}>} $config
+         * @var array{consent: array{enabled: bool}, client_side: array{enabled: bool}, server_side: array{enabled: bool}, pixels: array<array-key, array{id: string, access_token: string}>, filters: array{user_agent: list<string>}} $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
@@ -29,6 +29,7 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
         $container->setParameter('setono_meta_conversions_api.client_side.enabled', $config['client_side']['enabled']);
         $container->setParameter('setono_meta_conversions_api.server_side.enabled', $config['server_side']['enabled']);
         $container->setParameter('setono_meta_conversions_api.pixels', $config['pixels']);
+        $container->setParameter('setono_meta_conversions_api.filters.user_agent', $config['filters']['user_agent'] ?? []);
 
         $loader->load('services.xml');
 
