@@ -20,6 +20,11 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
+        <service id="setono_meta_conversions_api.event_subscriber.filter_empty_user_agent"
+                 class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber">
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
         <service id="setono_meta_conversions_api.event_subscriber.populate_fbp_and_fbc_properties"
                  class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateFbpAndFbcPropertiesSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbp"/>
