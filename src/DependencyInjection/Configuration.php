@@ -19,7 +19,7 @@ final class Configuration implements ConfigurationInterface
 
         $clientSideDefault = 'canBeEnabled';
         if (InstalledVersions::isInstalled('setono/tag-bag-bundle')
-            && InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0@alpha')) {
+            && InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0')) {
             $clientSideDefault = 'canBeDisabled';
         }
 
