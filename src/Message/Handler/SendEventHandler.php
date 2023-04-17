@@ -6,9 +6,8 @@ namespace Setono\MetaConversionsApiBundle\Message\Handler;
 
 use Setono\MetaConversionsApi\Client\ClientInterface;
 use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-final class SendEventHandler implements MessageHandlerInterface
+final class SendEventHandler
 {
     private ClientInterface $client;
 
