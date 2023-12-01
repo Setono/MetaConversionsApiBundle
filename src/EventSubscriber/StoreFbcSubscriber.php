@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Setono\Consent\Context\ConsentContextInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -19,9 +20,18 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
 {
     private FbcContextInterface $fbcContext;
 
-    public function __construct(FbcContextInterface $fbcContext)
-    {
+    private ?ConsentContextInterface $consentContext;
+
+    private ?bool $consentEnabled;
+
+    public function __construct(
+        FbcContextInterface $fbcContext,
+        ConsentContextInterface $consentContext = null,
+        bool $consentEnabled = null
+    ) {
         $this->fbcContext = $fbcContext;
+        $this->consentContext = $consentContext;
+        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array
@@ -34,6 +44,10 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
     public function store(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
+            return;
+        }
+
+        if (true === $this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
             return;
         }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Setono\Consent\Context\ConsentContextInterface;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -23,9 +24,18 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
 
     private FbpContextInterface $fbpContext;
 
-    public function __construct(FbpContextInterface $fbpContext)
-    {
+    private ?ConsentContextInterface $consentContext;
+
+    private ?bool $consentEnabled;
+
+    public function __construct(
+        FbpContextInterface $fbpContext,
+        ConsentContextInterface $consentContext = null,
+        bool $consentEnabled = null
+    ) {
         $this->fbpContext = $fbpContext;
+        $this->consentContext = $consentContext;
+        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array
@@ -38,6 +48,10 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
     public function store(ResponseEvent $event): void
     {
         if (!$event->isMainRequest()) {
+            return;
+        }
+
+        if (true === $this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
             return;
         }
 

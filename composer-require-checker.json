@@ -20,6 +20,7 @@
         "Setono\\TagBag\\Tag\\ContentTag",
         "Setono\\TagBag\\Tag\\Tag",
         "Setono\\TagBag\\Tag\\TagInterface",
-        "Setono\\TagBag\\TagBagInterface"
+        "Setono\\TagBag\\TagBagInterface",
+        "Setono\\Consent\\Context\\ConsentContextInterface"
     ]
 }
