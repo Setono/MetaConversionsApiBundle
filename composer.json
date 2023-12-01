@@ -32,7 +32,6 @@
         "phpunit/phpunit": "^9.5",
         "psalm/plugin-phpunit": "^0.18",
         "psalm/plugin-symfony": "^3.1 || ^4.0",
-        "roave/security-advisories": "dev-latest",
         "setono/code-quality-pack": "^2.4",
         "setono/consent-bundle": "^0.1.4",
         "setono/tag-bag": "^2.2",
