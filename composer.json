@@ -21,7 +21,6 @@
         "symfony/http-foundation": "^6.4 || ^7.0",
         "symfony/http-kernel": "^6.4 || ^7.0",
         "symfony/messenger": "^6.4 || ^7.0",
-        "symfony/monolog-bundle": "^2.12 || ^3.8",
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
