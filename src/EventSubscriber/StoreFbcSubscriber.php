@@ -27,7 +27,7 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
     public function __construct(
         FbcContextInterface $fbcContext,
         ConsentContextInterface $consentContext = null,
-        bool $consentEnabled = null
+        bool $consentEnabled = null,
     ) {
         $this->fbcContext = $fbcContext;
         $this->consentContext = $consentContext;
@@ -64,7 +64,7 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
         $event->getResponse()->headers->setCookie(Cookie::create(
             '_fbc',
             $fbc->value(),
-            new \DateTimeImmutable('+90 days')
+            new \DateTimeImmutable('+90 days'),
         )->withHttpOnly(false));  // we need this to allow the js library to also use the cookie value
     }
 }

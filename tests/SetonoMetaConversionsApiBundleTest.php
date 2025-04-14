@@ -107,7 +107,7 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
                 'Service %s was not an instance of %s, but an instance of %s',
                 $service['id'],
                 $service['class'],
-                get_class($obj)
+                get_class($obj),
             ));
         }
     }

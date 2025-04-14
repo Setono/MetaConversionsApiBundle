@@ -30,7 +30,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
         FbqGeneratorInterface $fbqGenerator,
         ?ConsentContextInterface $consentContext,
         bool $clientSideEnabled,
-        bool $consentEnabled
+        bool $consentEnabled,
     ) {
         $this->tagBag = $tagBag;
         $this->fbqGenerator = $fbqGenerator;
@@ -59,12 +59,12 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
         $this->tagBag->add(
             FbqInitTag::create($this->fbqGenerator->generateInit(
                 $event->event->pixels,
-                $event->event->userData->getPayload(Parameters::PAYLOAD_CONTEXT_BROWSER)
-            ), 100)
+                $event->event->userData->getPayload(Parameters::PAYLOAD_CONTEXT_BROWSER),
+            ), 100),
         );
 
         $this->tagBag->add(
-            ContentTag::create($this->fbqGenerator->generateTrack($event->event))
+            ContentTag::create($this->fbqGenerator->generateTrack($event->event)),
         );
     }
 }

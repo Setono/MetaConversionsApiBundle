@@ -35,7 +35,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
         ?ConsentContextInterface $consentContext,
         PixelProviderInterface $pixelProvider,
         bool $clientSideEnabled,
-        bool $consentEnabled
+        bool $consentEnabled,
     ) {
         $this->tagBag = $tagBag;
         $this->fbqGenerator = $fbqGenerator;
@@ -68,13 +68,13 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
         }
 
         $this->tagBag->add(
-            MetaPixelTag::create()->withPriority(200)->withSection(TagInterface::SECTION_HEAD)
+            MetaPixelTag::create()->withPriority(200)->withSection(TagInterface::SECTION_HEAD),
         );
 
         $this->tagBag->add(
             // the priority for this one has to be lower than the one in \Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber
             // this way this one will be replaced by the other one if it is added to the tag bag (because of the lower priority)
-            FbqInitTag::create($this->fbqGenerator->generateInit($pixels), 50)
+            FbqInitTag::create($this->fbqGenerator->generateInit($pixels), 50),
         );
     }
 }

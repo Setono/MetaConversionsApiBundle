@@ -24,7 +24,7 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
         MessageBusInterface $commandBus,
         ?ConsentContextInterface $consentContext,
         bool $serverSideEnabled,
-        bool $consentEnabled
+        bool $consentEnabled,
     ) {
         $this->commandBus = $commandBus;
         $this->consentContext = $consentContext;

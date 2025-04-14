@@ -31,7 +31,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
     public function __construct(
         FbpContextInterface $fbpContext,
         ConsentContextInterface $consentContext = null,
-        bool $consentEnabled = null
+        bool $consentEnabled = null,
     ) {
         $this->fbpContext = $fbpContext;
         $this->consentContext = $consentContext;
@@ -64,7 +64,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
         $cookie = Cookie::create(
             self::COOKIE_NAME,
             $fbp->value(),
-            new \DateTimeImmutable('+90 days')
+            new \DateTimeImmutable('+90 days'),
         )
             ->withHttpOnly(false) // we need this to allow the js library to also use the cookie value
         ;

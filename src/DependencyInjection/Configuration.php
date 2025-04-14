@@ -18,12 +18,12 @@ final class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->getRootNode();
 
         $clientSideDefault = 'canBeEnabled';
-        if (InstalledVersions::isInstalled('setono/tag-bag-bundle')
-            && InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0')) {
+        if (InstalledVersions::isInstalled('setono/tag-bag-bundle') &&
+            InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0')) {
             $clientSideDefault = 'canBeDisabled';
         }
 
-        /** @psalm-suppress MixedMethodCall, PossiblyUndefinedMethod, PossiblyNullReference */
+        /** @psalm-suppress MixedMethodCall,PossiblyUndefinedMethod,PossiblyNullReference,UndefinedInterfaceMethod */
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
@@ -51,10 +51,6 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('user_agent')
                             ->scalarPrototype()->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
         ;
 
         return $treeBuilder;

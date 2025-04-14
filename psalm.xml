@@ -3,6 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    findUnusedCode="false"
+    findUnusedPsalmSuppress="false"
+    findUnusedVariablesAndParams="false"
     errorLevel="1"
     phpVersion="8.1"
 >
@@ -18,7 +21,6 @@
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
     <issueHandlers>
-        <!-- We use 'unnecessary var annotations' to help the IDE -->
-        <UnnecessaryVarAnnotation errorLevel="suppress"/>
+        <MissingOverrideAttribute errorLevel="suppress"/>
     </issueHandlers>
 </psalm>
