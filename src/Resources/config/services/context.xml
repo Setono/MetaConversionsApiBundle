@@ -5,50 +5,38 @@
     <services>
         <!-- fbc contexts -->
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface"
-                 alias="setono_meta_conversions_api.context.fbc"/>
+                 alias="Setono\MetaConversionsApiBundle\Context\Fbc\CookieBasedFbcContext"/>
 
-        <service id="setono_meta_conversions_api.context.fbc"
-                 alias="setono_meta_conversions_api.context.fbc.cookie_based"/>
-
-        <service id="setono_meta_conversions_api.context.fbc.cookie_based"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbc\CookieBasedFbcContext">
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbc\CookieBasedFbcContext">
             <argument type="service" id="request_stack"/>
         </service>
 
-        <service id="setono_meta_conversions_api.context.fbc.cached"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext"
-                 decorates="setono_meta_conversions_api.context.fbc" decoration-priority="32">
-            <argument type="service" id="setono_meta_conversions_api.context.fbc.cached.inner"/>
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext"
+                 decorates="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface" decoration-priority="32">
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext.inner"/>
         </service>
 
-        <service id="setono_meta_conversions_api.context.fbc.query_based"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext"
-                 decorates="setono_meta_conversions_api.context.fbc" decoration-priority="64">
-            <argument type="service" id="setono_meta_conversions_api.context.fbc.query_based.inner"/>
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext"
+                 decorates="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface" decoration-priority="64">
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext.inner"/>
             <argument type="service" id="request_stack"/>
         </service>
 
         <!-- fbp contexts -->
         <service id="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface"
-                 alias="setono_meta_conversions_api.context.fbp"/>
+                 alias="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext"/>
 
-        <service id="setono_meta_conversions_api.context.fbp"
-                 alias="setono_meta_conversions_api.context.fbp.generated"/>
-
-        <service id="setono_meta_conversions_api.context.fbp.generated"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext">
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext">
         </service>
 
-        <service id="setono_meta_conversions_api.context.fbp.cached"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext"
-                 decorates="setono_meta_conversions_api.context.fbp" decoration-priority="32">
-            <argument type="service" id="setono_meta_conversions_api.context.fbp.cached.inner"/>
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext"
+                 decorates="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface" decoration-priority="32">
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext.inner"/>
         </service>
 
-        <service id="setono_meta_conversions_api.context.fbp.cookie_based"
-                 class="Setono\MetaConversionsApiBundle\Context\Fbp\CookieBasedFbpContext"
-                 decorates="setono_meta_conversions_api.context.fbp" decoration-priority="64">
-            <argument type="service" id="setono_meta_conversions_api.context.fbp.cookie_based.inner"/>
+        <service id="Setono\MetaConversionsApiBundle\Context\Fbp\CookieBasedFbpContext"
+                 decorates="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface" decoration-priority="64">
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbp\CookieBasedFbpContext.inner"/>
             <argument type="service" id="request_stack"/>
         </service>
     </services>
