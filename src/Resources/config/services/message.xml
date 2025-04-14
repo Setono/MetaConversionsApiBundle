@@ -5,7 +5,7 @@
     <services>
         <service id="setono_meta_conversions_api.message_handler.send_event"
                  class="Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler">
-            <argument type="service" id="setono_meta_conversions_api.client.default"/>
+            <argument type="service" id="Setono\MetaConversionsApi\Client\ClientInterface"/>
 
             <tag name="messenger.message_handler"/>
         </service>
