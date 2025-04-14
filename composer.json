@@ -35,6 +35,7 @@
         "setono/consent-bundle": "^1.2",
         "setono/tag-bag": "^2.2",
         "setono/tag-bag-bundle": "^3.0",
+        "shipmonk/composer-dependency-analyser": "^1.8",
         "symfony/twig-bundle": "^6.4 || ^7.0"
     },
     "prefer-stable": true,
