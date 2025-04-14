@@ -9,15 +9,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInterface
 {
-    /** @var list<string> */
-    private array $userAgents;
-
     /**
      * @param list<string> $userAgents
      */
-    public function __construct(array $userAgents)
+    public function __construct(private readonly array $userAgents)
     {
-        $this->userAgents = $userAgents;
     }
 
     public static function getSubscribedEvents(): array

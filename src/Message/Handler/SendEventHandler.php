@@ -9,11 +9,8 @@ use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
 
 final class SendEventHandler
 {
-    private ClientInterface $client;
-
-    public function __construct(ClientInterface $client)
+    public function __construct(private readonly ClientInterface $client)
     {
-        $this->client = $client;
     }
 
     public function __invoke(SendEvent $message): void

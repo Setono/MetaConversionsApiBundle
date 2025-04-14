@@ -9,7 +9,7 @@ use Setono\MetaConversionsApi\Pixel\Pixel;
 final class ConfigurationBasedPixelProvider implements PixelProviderInterface
 {
     /** @var list<array{id: string, access_token?: string}> */
-    private array $pixels;
+    private readonly array $pixels;
 
     /**
      * @param list<array{id: string, access_token?: string}> $pixels
@@ -17,9 +17,7 @@ final class ConfigurationBasedPixelProvider implements PixelProviderInterface
     public function __construct(array $pixels)
     {
         // this will filter all pixels where the id _or_ the access_token is empty
-        $this->pixels = array_values(array_filter($pixels, static function (array $pixel): bool {
-            return '' !== $pixel['id'];
-        }));
+        $this->pixels = array_values(array_filter($pixels, static fn (array $pixel): bool => '' !== $pixel['id']));
     }
 
     public function getPixels(): array

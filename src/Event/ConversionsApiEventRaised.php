@@ -12,18 +12,11 @@ use Symfony\Contracts\EventDispatcher\Event as StoppableEvent;
  */
 final class ConversionsApiEventRaised extends StoppableEvent
 {
-    public Event $event;
-
-    /** @var array<string, mixed> */
-    public array $context;
-
     /**
      * @param array<string, mixed> $context
      */
-    public function __construct(Event $event, array $context = [])
+    public function __construct(public Event $event, public array $context = [])
     {
-        $this->event = $event;
-        $this->context = $context;
     }
 
     /**

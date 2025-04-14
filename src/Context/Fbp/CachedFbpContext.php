@@ -8,13 +8,10 @@ use Setono\MetaConversionsApi\ValueObject\Fbp;
 
 final class CachedFbpContext implements FbpContextInterface
 {
-    private FbpContextInterface $decorated;
-
     private ?Fbp $cached = null;
 
-    public function __construct(FbpContextInterface $decorated)
+    public function __construct(private readonly FbpContextInterface $decorated)
     {
-        $this->decorated = $decorated;
     }
 
     public function getFbp(): Fbp

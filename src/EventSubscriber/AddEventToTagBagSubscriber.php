@@ -15,28 +15,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 {
-    private TagBagInterface $tagBag;
-
-    private FbqGeneratorInterface $fbqGenerator;
-
-    private ?ConsentContextInterface $consentContext;
-
-    private bool $clientSideEnabled;
-
-    private bool $consentEnabled;
-
     public function __construct(
-        TagBagInterface $tagBag,
-        FbqGeneratorInterface $fbqGenerator,
-        ?ConsentContextInterface $consentContext,
-        bool $clientSideEnabled,
-        bool $consentEnabled,
+        private readonly TagBagInterface $tagBag,
+        private readonly FbqGeneratorInterface $fbqGenerator,
+        private readonly ?ConsentContextInterface $consentContext,
+        private readonly bool $clientSideEnabled,
+        private readonly bool $consentEnabled,
     ) {
-        $this->tagBag = $tagBag;
-        $this->fbqGenerator = $fbqGenerator;
-        $this->consentContext = $consentContext;
-        $this->clientSideEnabled = $clientSideEnabled;
-        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array

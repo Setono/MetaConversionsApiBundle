@@ -10,11 +10,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class FilterBotsSubscriber implements EventSubscriberInterface
 {
-    private BotDetectorInterface $botDetector;
-
-    public function __construct(BotDetectorInterface $botDetector)
+    public function __construct(private readonly BotDetectorInterface $botDetector)
     {
-        $this->botDetector = $botDetector;
     }
 
     public static function getSubscribedEvents(): array

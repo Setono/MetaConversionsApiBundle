@@ -8,15 +8,12 @@ use Setono\MetaConversionsApi\ValueObject\Fbc;
 
 final class CachedFbcContext implements FbcContextInterface
 {
-    private FbcContextInterface $decorated;
-
     private bool $cached = false;
 
     private ?Fbc $value = null;
 
-    public function __construct(FbcContextInterface $decorated)
+    public function __construct(private readonly FbcContextInterface $decorated)
     {
-        $this->decorated = $decorated;
     }
 
     public function getFbc(): ?Fbc

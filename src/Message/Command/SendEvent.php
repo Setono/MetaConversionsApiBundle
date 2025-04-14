@@ -11,10 +11,7 @@ use Setono\MetaConversionsApi\Event\Event;
  */
 final class SendEvent implements CommandInterface
 {
-    public Event $event;
-
-    public function __construct(Event $event)
+    public function __construct(public Event $event)
     {
-        $this->event = $event;
     }
 }

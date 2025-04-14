@@ -12,24 +12,12 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
 {
-    private MessageBusInterface $commandBus;
-
-    private ?ConsentContextInterface $consentContext;
-
-    private bool $serverSideEnabled;
-
-    private bool $consentEnabled;
-
     public function __construct(
-        MessageBusInterface $commandBus,
-        ?ConsentContextInterface $consentContext,
-        bool $serverSideEnabled,
-        bool $consentEnabled,
+        private readonly MessageBusInterface $commandBus,
+        private readonly ?ConsentContextInterface $consentContext,
+        private readonly bool $serverSideEnabled,
+        private readonly bool $consentEnabled,
     ) {
-        $this->commandBus = $commandBus;
-        $this->consentContext = $consentContext;
-        $this->serverSideEnabled = $serverSideEnabled;
-        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array

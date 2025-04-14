@@ -17,32 +17,14 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 {
-    private TagBagInterface $tagBag;
-
-    private FbqGeneratorInterface $fbqGenerator;
-
-    private ?ConsentContextInterface $consentContext;
-
-    private PixelProviderInterface $pixelProvider;
-
-    private bool $clientSideEnabled;
-
-    private bool $consentEnabled;
-
     public function __construct(
-        TagBagInterface $tagBag,
-        FbqGeneratorInterface $fbqGenerator,
-        ?ConsentContextInterface $consentContext,
-        PixelProviderInterface $pixelProvider,
-        bool $clientSideEnabled,
-        bool $consentEnabled,
+        private readonly TagBagInterface $tagBag,
+        private readonly FbqGeneratorInterface $fbqGenerator,
+        private readonly ?ConsentContextInterface $consentContext,
+        private readonly PixelProviderInterface $pixelProvider,
+        private readonly bool $clientSideEnabled,
+        private readonly bool $consentEnabled,
     ) {
-        $this->tagBag = $tagBag;
-        $this->fbqGenerator = $fbqGenerator;
-        $this->consentContext = $consentContext;
-        $this->pixelProvider = $pixelProvider;
-        $this->clientSideEnabled = $clientSideEnabled;
-        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array

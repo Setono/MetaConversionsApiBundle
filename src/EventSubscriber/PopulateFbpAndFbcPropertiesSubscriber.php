@@ -11,14 +11,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInterface
 {
-    private FbpContextInterface $fbpContext;
-
-    private FbcContextInterface $fbcContext;
-
-    public function __construct(FbpContextInterface $fbpContext, FbcContextInterface $fbcContext)
-    {
-        $this->fbpContext = $fbpContext;
-        $this->fbcContext = $fbcContext;
+    public function __construct(
+        private readonly FbpContextInterface $fbpContext,
+        private readonly FbcContextInterface $fbcContext,
+    ) {
     }
 
     public static function getSubscribedEvents(): array

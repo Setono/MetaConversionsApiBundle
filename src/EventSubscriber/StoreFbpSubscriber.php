@@ -22,20 +22,11 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
 {
     private const COOKIE_NAME = '_fbp';
 
-    private FbpContextInterface $fbpContext;
-
-    private ?ConsentContextInterface $consentContext;
-
-    private ?bool $consentEnabled;
-
     public function __construct(
-        FbpContextInterface $fbpContext,
-        ConsentContextInterface $consentContext = null,
-        bool $consentEnabled = null,
+        private readonly FbpContextInterface $fbpContext,
+        private readonly ?ConsentContextInterface $consentContext = null,
+        private readonly ?bool $consentEnabled = null,
     ) {
-        $this->fbpContext = $fbpContext;
-        $this->consentContext = $consentContext;
-        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array

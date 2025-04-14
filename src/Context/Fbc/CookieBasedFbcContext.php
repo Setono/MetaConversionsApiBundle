@@ -9,11 +9,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbcContext implements FbcContextInterface
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
     public function getFbc(): ?Fbc
@@ -27,7 +24,7 @@ final class CookieBasedFbcContext implements FbcContextInterface
         if (is_string($fbc)) {
             try {
                 return Fbc::fromString($fbc);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
             }
         }
 

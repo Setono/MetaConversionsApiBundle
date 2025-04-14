@@ -10,11 +10,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class PopulatePixelsSubscriber implements EventSubscriberInterface
 {
-    private PixelProviderInterface $pixelProvider;
-
-    public function __construct(PixelProviderInterface $pixelProvider)
+    public function __construct(private readonly PixelProviderInterface $pixelProvider)
     {
-        $this->pixelProvider = $pixelProvider;
     }
 
     public static function getSubscribedEvents(): array

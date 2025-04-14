@@ -9,14 +9,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbpContext implements FbpContextInterface
 {
-    private FbpContextInterface $decorated;
-
-    private RequestStack $requestStack;
-
-    public function __construct(FbpContextInterface $decorated, RequestStack $requestStack)
-    {
-        $this->decorated = $decorated;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        private readonly FbpContextInterface $decorated,
+        private readonly RequestStack $requestStack,
+    ) {
     }
 
     public function getFbp(): Fbp
@@ -30,7 +26,7 @@ final class CookieBasedFbpContext implements FbpContextInterface
         if (is_string($fbp)) {
             try {
                 return Fbp::fromString($fbp);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
             }
         }
 

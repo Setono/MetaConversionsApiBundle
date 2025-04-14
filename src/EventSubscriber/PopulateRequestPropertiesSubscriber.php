@@ -10,11 +10,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterface
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
     public static function getSubscribedEvents(): array

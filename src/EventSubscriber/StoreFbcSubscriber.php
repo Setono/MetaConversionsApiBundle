@@ -18,20 +18,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class StoreFbcSubscriber implements EventSubscriberInterface
 {
-    private FbcContextInterface $fbcContext;
-
-    private ?ConsentContextInterface $consentContext;
-
-    private ?bool $consentEnabled;
-
     public function __construct(
-        FbcContextInterface $fbcContext,
-        ConsentContextInterface $consentContext = null,
-        bool $consentEnabled = null,
+        private readonly FbcContextInterface $fbcContext,
+        private readonly ?ConsentContextInterface $consentContext = null,
+        private readonly ?bool $consentEnabled = null,
     ) {
-        $this->fbcContext = $fbcContext;
-        $this->consentContext = $consentContext;
-        $this->consentEnabled = $consentEnabled;
     }
 
     public static function getSubscribedEvents(): array

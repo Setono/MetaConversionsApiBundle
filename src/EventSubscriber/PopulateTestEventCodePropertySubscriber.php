@@ -11,11 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class PopulateTestEventCodePropertySubscriber implements EventSubscriberInterface
 {
-    private RequestStack $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
     }
 
     public static function getSubscribedEvents(): array
@@ -29,7 +26,7 @@ final class PopulateTestEventCodePropertySubscriber implements EventSubscriberIn
     {
         try {
             $session = $this->requestStack->getSession();
-        } catch (SessionNotFoundException $e) {
+        } catch (SessionNotFoundException) {
             return;
         }
 

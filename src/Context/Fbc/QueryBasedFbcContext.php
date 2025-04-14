@@ -9,14 +9,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 final class QueryBasedFbcContext implements FbcContextInterface
 {
-    private FbcContextInterface $decorated;
-
-    private RequestStack $requestStack;
-
-    public function __construct(FbcContextInterface $decorated, RequestStack $requestStack)
-    {
-        $this->decorated = $decorated;
-        $this->requestStack = $requestStack;
+    public function __construct(
+        private readonly FbcContextInterface $decorated,
+        private readonly RequestStack $requestStack,
+    ) {
     }
 
     public function getFbc(): ?Fbc
