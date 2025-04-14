@@ -4,10 +4,9 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"
-                 alias="setono_meta_conversions_api.generator.fbq"/>
+                 alias="Setono\MetaConversionsApi\Generator\FbqGenerator"/>
 
-        <service id="setono_meta_conversions_api.generator.fbq"
-                 class="Setono\MetaConversionsApi\Generator\FbqGenerator">
+        <service id="Setono\MetaConversionsApi\Generator\FbqGenerator">
             <call method="setLogger">
                 <argument type="service" id="logger"/>
             </call>

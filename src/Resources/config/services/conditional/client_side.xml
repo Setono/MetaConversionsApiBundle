@@ -5,7 +5,7 @@
     <services>
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber">
             <argument type="service" id="setono_tag_bag.tag_bag"/>
-            <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
+            <argument type="service" id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
 
             <tag name="kernel.event_subscriber"/>
@@ -13,9 +13,9 @@
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber">
             <argument type="service" id="setono_tag_bag.tag_bag"/>
-            <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
+            <argument type="service" id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface" on-invalid="null"/>
-            <argument type="service" id="setono_meta_conversions_api.pixel_provider.default"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
