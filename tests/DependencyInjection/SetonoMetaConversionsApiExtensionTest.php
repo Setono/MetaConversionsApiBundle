@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
+use Setono\Consent\DefaultConsents;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 
@@ -35,6 +36,7 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->load();
 
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.consent.enabled', false);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.consent.category', DefaultConsents::CONSENT_MARKETING);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.client_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);

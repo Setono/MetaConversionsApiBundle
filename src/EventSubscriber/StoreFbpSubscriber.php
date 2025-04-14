@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\Consent\Context\ConsentContextInterface;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
+use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -24,8 +24,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
 
     public function __construct(
         private readonly FbpContextInterface $fbpContext,
-        private readonly ?ConsentContextInterface $consentContext = null,
-        private readonly ?bool $consentEnabled = null,
+        private readonly ConsentCheckerInterface $consentChecker,
     ) {
     }
 
@@ -42,7 +41,7 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (true === $this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
+        if (!$this->consentChecker->isGranted()) {
             return;
         }
 

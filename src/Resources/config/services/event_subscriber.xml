@@ -3,89 +3,74 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="setono_meta_conversions_api.event_subscriber.dispatch_on_command_bus"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
             <argument type="service" id="setono_meta_conversions_api.command_bus"/>
-            <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
             <argument>%setono_meta_conversions_api.server_side.enabled%</argument>
-            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.filter_bots"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterBotsSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterBotsSubscriber">
             <argument type="service" id="setono_bot_detection.bot_detector.default"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.filter_configured_user_agents"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterConfiguredUserAgentsSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterConfiguredUserAgentsSubscriber">
             <argument>%setono_meta_conversions_api.filters.user_agent%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.filter_empty_user_agent"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.populate_fbp_and_fbc_properties"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateFbpAndFbcPropertiesSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateFbpAndFbcPropertiesSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbp"/>
             <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.populate_pixels"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulatePixelsSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulatePixelsSubscriber">
             <argument type="service" id="setono_meta_conversions_api.pixel_provider.default"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.populate_request_properties"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateRequestPropertiesSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateRequestPropertiesSubscriber">
             <argument type="service" id="request_stack"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.populate_test_event_code_property"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateTestEventCodePropertySubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateTestEventCodePropertySubscriber">
             <argument type="service" id="request_stack"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.stop_propagation_if_no_pixels_has_been_added"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StopPropagationIfNoPixelsHasBeenAddedSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StopPropagationIfNoPixelsHasBeenAddedSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.store_fbc"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbc"/>
-            <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
-            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.store_fbp"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber">
             <argument type="service" id="setono_meta_conversions_api.context.fbp"/>
-            <argument type="service" id="setono_consent.context.default" on-invalid="null"/>
-            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="setono_meta_conversions_api.event_subscriber.store_test_event_code"
-                 class="Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber">
+        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>

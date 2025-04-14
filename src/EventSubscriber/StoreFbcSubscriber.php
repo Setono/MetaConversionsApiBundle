@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\Consent\Context\ConsentContextInterface;
+use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -20,8 +20,7 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly FbcContextInterface $fbcContext,
-        private readonly ?ConsentContextInterface $consentContext = null,
-        private readonly ?bool $consentEnabled = null,
+        private readonly ConsentCheckerInterface $consentChecker,
     ) {
     }
 
@@ -38,12 +37,12 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (true === $this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
+        // only store a cookie if the fbclid is set on the current request
+        if (!$event->getRequest()->query->has('fbclid')) {
             return;
         }
 
-        // only store a cookie if the fbclid is set on the current request
-        if (!$event->getRequest()->query->has('fbclid')) {
+        if (!$this->consentChecker->isGranted()) {
             return;
         }
 

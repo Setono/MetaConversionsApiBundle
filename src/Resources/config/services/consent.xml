@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"
+                 alias="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentChecker"/>
+
+        <service id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentChecker">
+            <argument>%setono_meta_conversions_api.consent.enabled%</argument>
+            <argument>%setono_meta_conversions_api.consent.category%</argument>
+            <argument type="service" id="Setono\Consent\ConsentCheckerInterface" on-invalid="null"/>
+        </service>
+    </services>
+</container>

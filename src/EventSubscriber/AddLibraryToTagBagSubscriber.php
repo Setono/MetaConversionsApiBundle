@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\Consent\Context\ConsentContextInterface;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
+use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Setono\MetaConversionsApiBundle\Tag\FbqInitTag;
 use Setono\MetaConversionsApiBundle\Tag\MetaPixelTag;
@@ -20,10 +20,9 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly TagBagInterface $tagBag,
         private readonly FbqGeneratorInterface $fbqGenerator,
-        private readonly ?ConsentContextInterface $consentContext,
+        private readonly ConsentCheckerInterface $consentChecker,
         private readonly PixelProviderInterface $pixelProvider,
         private readonly bool $clientSideEnabled,
-        private readonly bool $consentEnabled,
     ) {
     }
 
@@ -40,7 +39,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($this->consentEnabled && null !== $this->consentContext && !$this->consentContext->getConsent()->isMarketingConsentGranted()) {
+        if (!$this->consentChecker->isGranted()) {
             return;
         }
 

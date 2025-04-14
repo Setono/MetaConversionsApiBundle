@@ -6,6 +6,7 @@ namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 
 use Composer\InstalledVersions;
 use Composer\Semver\VersionParser;
+use Setono\Consent\DefaultConsents;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -30,6 +31,9 @@ final class Configuration implements ConfigurationInterface
                 ->arrayNode('consent')
                     ->info('If enabled, the bundle will only track events if a consent is granted')
                     ->canBeEnabled()
+                    ->children()
+                        ->scalarNode('category')->defaultValue(DefaultConsents::CONSENT_MARKETING)->end()
+                    ->end()
                 ->end()
                 ->arrayNode('client_side')
                     ->info('Configuration for client side tracking')
