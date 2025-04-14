@@ -7,7 +7,6 @@
             <argument type="service" id="setono_tag_bag.tag_bag"/>
             <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
-            <argument>%setono_meta_conversions_api.client_side.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -17,7 +16,6 @@
             <argument type="service" id="setono_meta_conversions_api.generator.fbq"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface" on-invalid="null"/>
             <argument type="service" id="setono_meta_conversions_api.pixel_provider.default"/>
-            <argument>%setono_meta_conversions_api.client_side.enabled%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>

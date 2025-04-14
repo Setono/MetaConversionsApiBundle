@@ -22,7 +22,6 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
         private readonly FbqGeneratorInterface $fbqGenerator,
         private readonly ConsentCheckerInterface $consentChecker,
         private readonly PixelProviderInterface $pixelProvider,
-        private readonly bool $clientSideEnabled,
     ) {
     }
 
@@ -35,7 +34,7 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 
     public function add(RequestEvent $event): void
     {
-        if (!$this->clientSideEnabled || !$event->isMainRequest()) {
+        if (!$event->isMainRequest()) {
             return;
         }
 

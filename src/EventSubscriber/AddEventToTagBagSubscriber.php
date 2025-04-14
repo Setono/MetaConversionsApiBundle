@@ -19,7 +19,6 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
         private readonly TagBagInterface $tagBag,
         private readonly FbqGeneratorInterface $fbqGenerator,
         private readonly ConsentCheckerInterface $consentChecker,
-        private readonly bool $clientSideEnabled,
     ) {
     }
 
@@ -32,10 +31,6 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 
     public function add(ConversionsApiEventRaised $event): void
     {
-        if (!$this->clientSideEnabled) {
-            return;
-        }
-
         if (!$this->consentChecker->isGranted()) {
             return;
         }
