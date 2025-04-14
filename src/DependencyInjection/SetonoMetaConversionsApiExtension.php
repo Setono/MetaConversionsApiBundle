@@ -48,6 +48,10 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
 
             $loader->load('services/conditional/client_side.xml');
         }
+
+        if ($config['server_side']['enabled']) {
+            $loader->load('services/conditional/server_side.xml');
+        }
     }
 
     public function prepend(ContainerBuilder $container): void

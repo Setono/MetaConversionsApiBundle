@@ -3,14 +3,6 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
-            <argument type="service" id="setono_meta_conversions_api.command_bus"/>
-            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
-            <argument>%setono_meta_conversions_api.server_side.enabled%</argument>
-
-            <tag name="kernel.event_subscriber"/>
-        </service>
-
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterBotsSubscriber">
             <argument type="service" id="setono_bot_detection.bot_detector.default"/>
 

@@ -26,6 +26,7 @@
     },
     "require-dev": {
         "matthiasnoback/symfony-dependency-injection-test": "^4.3 || ^5.0",
+        "nyholm/symfony-bundle-test": "^3.0",
         "phpspec/prophecy-phpunit": "^2.0",
         "phpunit/phpunit": "^9.6",
         "psalm/plugin-phpunit": "^0.19",

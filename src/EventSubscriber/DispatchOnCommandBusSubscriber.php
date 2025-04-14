@@ -15,7 +15,6 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly MessageBusInterface $commandBus,
         private readonly ConsentCheckerInterface $consentChecker,
-        private readonly bool $serverSideEnabled,
     ) {
     }
 
@@ -28,10 +27,6 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
 
     public function dispatch(ConversionsApiEventRaised $event): void
     {
-        if (!$this->serverSideEnabled) {
-            return;
-        }
-
         if (!$this->consentChecker->isGranted()) {
             return;
         }
