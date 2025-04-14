@@ -46,7 +46,7 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
             Assert::true(InstalledVersions::isInstalled('setono/tag-bag-bundle'), $exceptionMessage);
             Assert::true(InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0'), $exceptionMessage);
 
-            $loader->load('services/conditional/event_subscriber.xml');
+            $loader->load('services/conditional/client_side.xml');
         }
     }
 
