@@ -4,19 +4,28 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\Tests\Integration;
 
+use FacebookAds\ApiConfig;
 use Nyholm\BundleTest\TestKernel;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Attributes\Test;
 use Setono\BotDetectionBundle\SetonoBotDetectionBundle;
 use Setono\ConsentBundle\SetonoConsentBundle;
+use Setono\MetaConversionsApi\Client\ClientInterface;
+use Setono\MetaConversionsApi\Event\Event;
+use Setono\MetaConversionsApi\Pixel\Pixel;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber;
 use Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler;
 use Setono\MetaConversionsApiBundle\SetonoMetaConversionsApiBundle;
+use Setono\MetaConversionsApiBundle\Tests\Double\RecordingHttpClientFactory;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Psr18Client;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
@@ -216,6 +225,64 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             $container->get('event.bus.test'),
             $container->get('setono_meta_conversions_api.message_bus.test'),
         );
+    }
+
+    #[Test]
+    public function it_sends_events_through_the_applications_http_client(): void
+    {
+        RecordingHttpClientFactory::reset();
+
+        self::bootKernel(['config' => function (TestKernel $kernel) {
+            $kernel->addTestConfig(static function (ContainerBuilder $container) {
+                $container->loadFromExtension('setono_meta_conversions_api', [
+                    'client_side' => false,
+                ]);
+
+                $container->register('test.psr17_factory', Psr17Factory::class);
+                $container->register('test.mock_http_client', MockHttpClient::class)
+                    ->setFactory([RecordingHttpClientFactory::class, 'create']);
+
+                // Replacing the application's PSR-18 client must be enough to intercept everything the bundle
+                // sends. That only holds because the client is wired instead of discovered at runtime
+                $container->register('psr18.http_client', Psr18Client::class)
+                    ->setArguments([
+                        new Reference('test.mock_http_client'),
+                        new Reference('test.psr17_factory'),
+                        new Reference('test.psr17_factory'),
+                    ]);
+
+                $container->setAlias('test.conversions_api_client', ClientInterface::class)->setPublic(true);
+            });
+        }]);
+
+        $event = new Event(Event::EVENT_VIEW_CONTENT);
+        $event->pixels = [new Pixel('1234', 's3cr3t')];
+
+        $client = self::getContainer()->get('test.conversions_api_client');
+        self::assertInstanceOf(ClientInterface::class, $client);
+        $client->sendEvent($event);
+
+        // The Graph API version follows whichever facebook/php-business-sdk is installed
+        self::assertSame(
+            [['POST', sprintf('https://graph.facebook.com/v%s/1234/events', ApiConfig::APIVersion)]],
+            RecordingHttpClientFactory::$requests,
+        );
+    }
+
+    #[Test]
+    public function it_boots_when_the_configured_http_client_does_not_exist(): void
+    {
+        // Without symfony/http-client there is no psr18.http_client, and the SDK falls back to discovery
+        self::bootKernel(['config' => function (TestKernel $kernel) {
+            $kernel->addTestConfig(static function (ContainerBuilder $container) {
+                $container->loadFromExtension('setono_meta_conversions_api', [
+                    'client_side' => false,
+                    'http_client' => 'a.http.client.that.does.not.exist',
+                ]);
+            });
+        }]);
+
+        self::assertTrue(self::getContainer()->has(SendEventHandler::class));
     }
 
     #[Test]

@@ -84,6 +84,11 @@ setono_meta_conversions_api:
         - id: '%env(META_PIXEL_ID)%'
           access_token: '%env(META_ACCESS_TOKEN)%'
 
+    # The PSR-18 http client used to send events. Defaults to Symfony's default http client, which means requests
+    # to Meta show up in the profiler and honour the options you configured. Point it at a scoped client to give
+    # Meta its own timeout
+    http_client: psr18.http_client
+
     # Send events as test events, so they show up under 'Test events' in Meta's event manager instead of counting
     # as real conversions
     test_event_code:
@@ -245,6 +250,35 @@ $event = new Event(Event::EVENT_PURCHASE, Event::ACTION_SOURCE_SYSTEM_GENERATED)
 If such an event is raised while handling an HTTP request, for instance a webhook from your payment provider, the
 request properties still describe *that* request, not the customer. Overwrite them in a listener above
 `PRIORITY_POPULATE` when they matter.
+
+### Giving Meta its own timeout
+
+Because the client is a normal service, a scoped client works out of the box:
+
+```yaml
+framework:
+    http_client:
+        scoped_clients:
+            meta.client:
+                base_uri: 'https://graph.facebook.com'
+                timeout: 2
+                max_duration: 5
+
+setono_meta_conversions_api:
+    http_client: meta.client
+```
+
+Note that a scoped client is a Symfony `HttpClientInterface`, so wrap it for PSR-18:
+
+```yaml
+services:
+    meta.psr18_client:
+        class: Symfony\Component\HttpClient\Psr18Client
+        arguments: ['@meta.client']
+
+setono_meta_conversions_api:
+    http_client: meta.psr18_client
+```
 
 ## Graph API version
 
