@@ -92,7 +92,8 @@ setono_meta_conversions_api:
         value: null
 
     filters:
-        # Regular expression fragments (no delimiters). Events with a matching user agent are not tracked
+        # Regular expression fragments without delimiters, matched case insensitively. Events with a matching user
+        # agent are not tracked. Invalid fragments, and fragments containing an unescaped '#', fail at compile time
         user_agent: []
 ```
 

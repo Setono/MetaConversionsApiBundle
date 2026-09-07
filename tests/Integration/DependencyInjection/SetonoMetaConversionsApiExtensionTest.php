@@ -15,6 +15,7 @@ use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber;
 use Setono\TagBagBundle\SetonoTagBagBundle;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 #[CoversClass(SetonoMetaConversionsApiExtension::class)]
 final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestCase
@@ -66,6 +67,30 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
 
         $this->assertContainerBuilderNotHasService(AddEventToTagBagSubscriber::class);
         $this->assertContainerBuilderNotHasService(AddLibraryToTagBagSubscriber::class);
+    }
+
+    #[Test]
+    public function it_rejects_a_user_agent_filter_that_is_not_a_valid_regular_expression(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->load([
+            'filters' => [
+                'user_agent' => ['(unbalanced'],
+            ],
+        ]);
+    }
+
+    #[Test]
+    public function it_rejects_a_user_agent_filter_with_an_unescaped_delimiter(): void
+    {
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->load([
+            'filters' => [
+                'user_agent' => ['foo#bar'],
+            ],
+        ]);
     }
 
     #[Test]
