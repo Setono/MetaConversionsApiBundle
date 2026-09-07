@@ -15,13 +15,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
+final readonly class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly TagBagInterface $tagBag,
-        private readonly FbqGeneratorInterface $fbqGenerator,
-        private readonly ConsentCheckerInterface $consentChecker,
-        private readonly PixelProviderInterface $pixelProvider,
+        private TagBagInterface $tagBag,
+        private FbqGeneratorInterface $fbqGenerator,
+        private ConsentCheckerInterface $consentChecker,
+        private PixelProviderInterface $pixelProvider,
     ) {
     }
 

@@ -7,12 +7,12 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInterface
+final readonly class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInterface
 {
     /**
      * @param list<string> $userAgents
      */
-    public function __construct(private readonly array $userAgents)
+    public function __construct(private array $userAgents)
     {
     }
 

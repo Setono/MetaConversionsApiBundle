@@ -7,9 +7,9 @@ namespace Setono\MetaConversionsApiBundle\Message\Handler;
 use Setono\MetaConversionsApi\Client\ClientInterface;
 use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
 
-final class SendEventHandler
+final readonly class SendEventHandler
 {
-    public function __construct(private readonly ClientInterface $client)
+    public function __construct(private ClientInterface $client)
     {
     }
 

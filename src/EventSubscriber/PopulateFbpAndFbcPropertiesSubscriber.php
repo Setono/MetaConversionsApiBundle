@@ -9,11 +9,11 @@ use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInterface
+final readonly class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly FbpContextInterface $fbpContext,
-        private readonly FbcContextInterface $fbcContext,
+        private FbpContextInterface $fbpContext,
+        private FbcContextInterface $fbcContext,
     ) {
     }
 

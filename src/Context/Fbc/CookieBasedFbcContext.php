@@ -7,9 +7,9 @@ namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final class CookieBasedFbcContext implements FbcContextInterface
+final readonly class CookieBasedFbcContext implements FbcContextInterface
 {
-    public function __construct(private readonly RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack)
     {
     }
 

@@ -6,10 +6,10 @@ namespace Setono\MetaConversionsApiBundle\Provider;
 
 use Setono\MetaConversionsApi\Pixel\Pixel;
 
-final class ConfigurationBasedPixelProvider implements PixelProviderInterface
+final readonly class ConfigurationBasedPixelProvider implements PixelProviderInterface
 {
     /** @var list<array{id: string, access_token?: string}> */
-    private readonly array $pixels;
+    private array $pixels;
 
     /**
      * @param list<array{id: string, access_token?: string}> $pixels

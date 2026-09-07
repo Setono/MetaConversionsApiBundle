@@ -16,11 +16,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * See https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/fbp-and-fbc/#fbc
  */
-final class StoreFbcSubscriber implements EventSubscriberInterface
+final readonly class StoreFbcSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly FbcContextInterface $fbcContext,
-        private readonly ConsentCheckerInterface $consentChecker,
+        private FbcContextInterface $fbcContext,
+        private ConsentCheckerInterface $consentChecker,
     ) {
     }
 

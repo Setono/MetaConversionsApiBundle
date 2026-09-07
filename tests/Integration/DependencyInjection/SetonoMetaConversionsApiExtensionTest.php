@@ -2,16 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Setono\MetaConversionsApiBundle\Tests\DependencyInjection;
+namespace Setono\MetaConversionsApiBundle\Tests\Integration\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
 use Setono\Consent\DefaultConsents;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
+use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
+use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 
-/**
- * @covers \Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension
- */
+#[CoversClass(SetonoMetaConversionsApiExtension::class)]
 final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestCase
 {
     protected function getContainerExtensions(): array
@@ -28,9 +30,7 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->setParameter('kernel.bundles', ['SetonoTagBagBundle' => SetonoTagBagBundle::class]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_sets_parameters(): void
     {
         $this->load();
@@ -40,24 +40,30 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.client_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.filters.user_agent', []);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
+    public function it_loads_client_side_event_subscribers_when_client_side_is_enabled(): void
+    {
+        $this->load();
+
+        $this->assertContainerBuilderHasService(AddEventToTagBagSubscriber::class);
+        $this->assertContainerBuilderHasService(AddLibraryToTagBagSubscriber::class);
+    }
+
+    #[Test]
     public function it_does_not_load_client_side_event_subscribers_when_client_side_is_disabled(): void
     {
         $this->load([
             'client_side' => false,
         ]);
 
-        $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_event_to_tag_bag');
-        $this->assertContainerBuilderNotHasService('setono_meta_conversions_api.event_subscriber.add_library_to_tag_bag');
+        $this->assertContainerBuilderNotHasService(AddEventToTagBagSubscriber::class);
+        $this->assertContainerBuilderNotHasService(AddLibraryToTagBagSubscriber::class);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_sets_user_agent_filter(): void
     {
         $this->load([

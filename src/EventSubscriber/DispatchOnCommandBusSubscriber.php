@@ -10,11 +10,11 @@ use Setono\MetaConversionsApiBundle\Message\Command\SendEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
+final readonly class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly MessageBusInterface $commandBus,
-        private readonly ConsentCheckerInterface $consentChecker,
+        private MessageBusInterface $commandBus,
+        private ConsentCheckerInterface $consentChecker,
     ) {
     }
 
