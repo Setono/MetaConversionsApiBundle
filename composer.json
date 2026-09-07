@@ -25,14 +25,23 @@
         "webmozart/assert": "^1.11"
     },
     "require-dev": {
+        "ergebnis/composer-normalize": "^2.50",
         "matthiasnoback/symfony-dependency-injection-test": "^6.3",
         "nyholm/psr7": "^1.8",
         "nyholm/symfony-bundle-test": "^3.1",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
-        "setono/code-quality-pack": "^3.4",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^10.5 || ^11.5",
+        "rector/rector": "^2.4",
         "setono/consent-bundle": "^1.2",
         "setono/tag-bag": "^2.2",
         "setono/tag-bag-bundle": "^3.0",
+        "shipmonk/composer-dependency-analyser": "^1.8",
+        "sylius-labs/coding-standard": "^4.5",
         "symfony/framework-bundle": "^6.4 || ^7.4",
         "symfony/http-client": "^6.4 || ^7.4",
         "symfony/twig-bundle": "^6.4 || ^7.4"
@@ -52,7 +61,6 @@
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": false,
             "ergebnis/composer-normalize": true,
-            "infection/extension-installer": true,
             "php-http/discovery": false,
             "phpstan/extension-installer": true
         },

@@ -15,7 +15,7 @@ jobs:
         strategy:
             matrix:
                 php-version:
-                    - "8.2"
+                    - "8.1"
 
                 dependencies:
                     - "highest"
@@ -55,8 +55,8 @@ jobs:
 
         strategy:
             matrix:
-                # The analysis jobs start at PHP 8.2 because setono/code-quality-pack ^3 requires it
                 php-version:
+                    - "8.1"
                     - "8.2"
                     - "8.3"
                     - "8.4"
@@ -68,6 +68,10 @@ jobs:
                 symfony:
                     - "~6.4.0"
                     - "~7.4.0"
+
+                exclude:
+                    -   php-version: "8.1"
+                        symfony: "~7.4.0"
 
         steps:
             -   name: "Checkout"
@@ -99,6 +103,7 @@ jobs:
         strategy:
             matrix:
                 php-version:
+                    - "8.1"
                     - "8.2"
                     - "8.3"
                     - "8.4"
@@ -109,6 +114,10 @@ jobs:
                 symfony:
                     - "~6.4.0"
                     - "~7.4.0"
+
+                exclude:
+                    -   php-version: "8.1"
+                        symfony: "~7.4.0"
 
         steps:
             -   name: "Checkout"
@@ -169,13 +178,6 @@ jobs:
                     coverage: "none"
                     tools: "flex"
 
-            -   name: "Use PHP 8.1 compatible dev tooling"
-                if: "matrix.php-version == '8.1'"
-                # setono/code-quality-pack ^3 requires PHP 8.2, so on PHP 8.1 only PHPUnit is installed
-                run: |
-                    composer remove --dev --no-update setono/code-quality-pack phpstan/phpstan-symfony
-                    composer require --dev --no-update phpunit/phpunit:^10.5
-
             -   name: "Install composer dependencies"
                 uses: "ramsey/composer-install@v3"
                 with:
@@ -222,13 +224,6 @@ jobs:
                     extensions: "${{ env.PHP_EXTENSIONS }}"
                     coverage: "none"
                     tools: "flex"
-
-            -   name: "Use PHP 8.1 compatible dev tooling"
-                if: "matrix.php-version == '8.1'"
-                # setono/code-quality-pack ^3 requires PHP 8.2, so on PHP 8.1 only PHPUnit is installed
-                run: |
-                    composer remove --dev --no-update setono/code-quality-pack phpstan/phpstan-symfony
-                    composer require --dev --no-update phpunit/phpunit:^10.5
 
             -   name: "Install composer dependencies"
                 uses: "ramsey/composer-install@v3"
