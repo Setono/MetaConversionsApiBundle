@@ -71,7 +71,7 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
     #[Test]
     public function it_throws_exception_if_client_side_is_enabled_but_tag_bag_is_not_enabled(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\LogicException::class);
         self::bootKernel();
     }
 

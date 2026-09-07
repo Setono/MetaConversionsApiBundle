@@ -4,16 +4,40 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 
-use Composer\InstalledVersions;
-use Composer\Semver\VersionParser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Webmozart\Assert\Assert;
 
 final class SetonoMetaConversionsApiExtension extends Extension
 {
+    /**
+     * Client side tracking renders its tags through the tag bag, so it cannot work without that bundle
+     *
+     * @throws \LogicException if the tag bag bundle is not installed and registered
+     */
+    private static function assertTagBagBundleIsAvailable(ContainerBuilder $container): void
+    {
+        $requirement = sprintf(
+            'You need to install %s %s and register SetonoTagBagBundle to use client side tracking, or set setono_meta_conversions_api.client_side.enabled to false',
+            InstalledBundles::TAG_BAG_BUNDLE,
+            InstalledBundles::TAG_BAG_BUNDLE_CONSTRAINT,
+        );
+
+        if (!InstalledBundles::hasTagBagBundle()) {
+            throw new \LogicException($requirement);
+        }
+
+        if (!$container->hasParameter('kernel.bundles')) {
+            throw new \LogicException('The kernel.bundles parameter has not been set. Are you not using this in a Symfony application context?');
+        }
+
+        $bundles = $container->getParameter('kernel.bundles');
+        if (!is_array($bundles) || !array_key_exists('SetonoTagBagBundle', $bundles)) {
+            throw new \LogicException('The SetonoTagBagBundle is not in the list of enabled bundles. ' . $requirement);
+        }
+    }
+
     /**
      * @param array<array-key, mixed> $config
      */
@@ -62,16 +86,7 @@ final class SetonoMetaConversionsApiExtension extends Extension
         }
 
         if ($config['client_side']['enabled']) {
-            $exceptionMessage = 'You need to install the setono/tag-bag-bundle ^3.0 to use the client side tracking';
-
-            Assert::true($container->hasParameter('kernel.bundles'), 'The kernel.bundles parameter has not been set. Are you not using this in a Symfony application context?');
-
-            $bundles = $container->getParameter('kernel.bundles');
-            Assert::isArray($bundles);
-            Assert::keyExists($bundles, 'SetonoTagBagBundle', 'The SetonoTagBagBundle is not in the list of enabled bundles. ' . $exceptionMessage);
-
-            Assert::true(InstalledVersions::isInstalled('setono/tag-bag-bundle'), $exceptionMessage);
-            Assert::true(InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0'), $exceptionMessage);
+            self::assertTagBagBundleIsAvailable($container);
 
             $loader->load('services/conditional/client_side.xml');
         }
