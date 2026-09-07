@@ -12,8 +12,10 @@
 
         <service id="Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler">
             <argument type="service" id="Setono\MetaConversionsApi\Client\ClientInterface"/>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="messenger.message_handler"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
     </services>
 </container>

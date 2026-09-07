@@ -70,6 +70,21 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
     }
 
     #[Test]
+    public function it_accepts_a_pixel_without_an_access_token(): void
+    {
+        // Client side tracking only renders fbq() calls, which need the pixel id and nothing else
+        $this->load([
+            'pixels' => [
+                ['id' => '1234'],
+            ],
+        ]);
+
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', [
+            ['id' => '1234', 'access_token' => null],
+        ]);
+    }
+
+    #[Test]
     public function it_rejects_a_user_agent_filter_that_is_not_a_valid_regular_expression(): void
     {
         $this->expectException(InvalidConfigurationException::class);
