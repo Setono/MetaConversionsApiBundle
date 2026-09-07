@@ -14,6 +14,10 @@ Work with the Meta / Facebook Conversions API in your Symfony application. Under
 - A [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and [PSR-17](https://www.php-fig.org/psr/psr-17/) factories
   (see [Installation](#installation))
 
+Long running runtimes are supported. The services that cache per-request values are reset between requests, so
+FrankenPHP worker mode, RoadRunner and Swoole do not leak one visitor's `fbp` or `fbc` into the next visitor's
+events.
+
 ## Installation
 
 ```shell
@@ -49,6 +53,13 @@ and enable the `consent` option (see [Configuration](#configuration)):
 ```shell
 composer require setono/consent-bundle
 ```
+
+While consent is not granted, events are still built and enriched, but nothing leaves your server and nothing is
+stored on the visitor's device: no `fbq()` calls are rendered, no `SendEvent` is dispatched, and neither the `_fbp`
+nor the `_fbc` cookie is written. Each of those is logged at debug level, see
+[Why did my event not show up?](#why-did-my-event-not-show-up).
+
+If the consent bundle is not installed, or the `consent` option is off, everything is treated as granted.
 
 Upgrading from 0.1.x? See [UPGRADE.md](UPGRADE.md).
 
@@ -265,6 +276,42 @@ if ($event->hasContext('order')) {
     $order = $event->getContext('order');
 }
 ```
+
+### Deduplication between the browser and the server
+
+With both sides enabled the same event is deliberately sent twice: once by the browser pixel and once through the
+Conversions API. Meta collapses the pair because both carry the same id. `Event::$eventId` is generated in the
+constructor and rendered as `eventID` in the `fbq()` call and sent as `event_id` in the api payload, so a single
+dispatch is deduplicated for you.
+
+It only breaks if you assign ids yourself. If you do, use the same id on both sides, and make sure a page reload
+does not reuse an id from a previous page view.
+
+See [Meta's deduplication documentation](https://developers.facebook.com/docs/marketing-api/conversions-api/deduplicate-pixel-and-server-events).
+
+### What is sent to Meta
+
+Besides whatever you attach yourself, the bundle fills in:
+
+| Field | Where it comes from |
+|---|---|
+| `event_source_url` | The **full url of the current request, including its query string** |
+| `client_ip_address` | `Request::getClientIp()` |
+| `client_user_agent` | The `User-Agent` header |
+| `fbp`, `fbc` | The `_fbp` and `_fbc` cookies, or the `fbclid` query parameter |
+
+Two things are worth checking in your application:
+
+- **Configure `framework.trusted_proxies`.** Without it `getClientIp()` returns your load balancer's address, and
+  every visitor looks like they came from the same place.
+- **The query string is sent as is.** If your urls carry anything you would rather not hand to Meta, strip it in a
+  listener at `ConversionsApiEventRaised::PRIORITY_ENRICH`:
+  ```php
+  $event->event->eventSourceUrl = strtok((string) $event->event->eventSourceUrl, '?');
+  ```
+
+Personal data is normalised and hashed with SHA-256 by the SDK before it leaves your server, so raw email addresses
+and phone numbers are never sent, and they are not written to the Messenger transport either.
 
 ### Why did my event not show up?
 
