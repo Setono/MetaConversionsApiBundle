@@ -7,6 +7,8 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
+use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,11 +22,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 final class StoreFbpSubscriber implements EventSubscriberInterface
 {
-    private const COOKIE_NAME = '_fbp';
-
     public function __construct(
         private readonly FbpContextInterface $fbpContext,
         private readonly ConsentCheckerInterface $consentChecker,
+        private readonly PixelProviderInterface $pixelProvider,
     ) {
     }
 
@@ -41,33 +42,42 @@ final class StoreFbpSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+
+        // Any Set-Cookie header makes a response uncacheable for shared caches, so it is only worth writing on a
+        // page the visitor actually landed on. Redirects are included because an ad click often lands on one
+        if (!$response->isSuccessful() && !$response->isRedirection()) {
+            return;
+        }
+
+        // There is no point in identifying a browser we have nowhere to send events to
+        if ([] === $this->pixelProvider->getPixels()) {
+            return;
+        }
+
         if (!$this->consentChecker->isGranted()) {
             return;
         }
 
         $fbp = $this->fbpContext->getFbp();
 
-        if (!$this->setCookie($event->getRequest(), $fbp)) {
+        if (!$this->shouldSetCookie($event->getRequest(), $fbp)) {
             return;
         }
 
-        $cookie = Cookie::create(
-            self::COOKIE_NAME,
+        $response->headers->setCookie(Cookie::create(
+            Cookies::FBP,
             $fbp->value(),
-            new \DateTimeImmutable('+90 days'),
-        )
-            ->withHttpOnly(false) // we need this to allow the js library to also use the cookie value
-        ;
-
-        $event->getResponse()->headers->setCookie($cookie);
+            new \DateTimeImmutable(Cookies::LIFETIME),
+        )->withHttpOnly(false)); // we need this to allow the js library to also use the cookie value
     }
 
     /**
      * Returns true if the cookie should be created/updated
      */
-    private function setCookie(Request $request, Fbp $fbp): bool
+    private function shouldSetCookie(Request $request, Fbp $fbp): bool
     {
-        if (!$request->cookies->has(self::COOKIE_NAME)) {
+        if (!$request->cookies->has(Cookies::FBP)) {
             return true;
         }
 

@@ -26,7 +26,7 @@ final class SetonoMetaConversionsApiExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         /**
-         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, http_client: string, test_event_code: array{query_parameter: bool, value: string|null}, filters: array{user_agent: list<string>}} $config
+         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, http_client: string, test_event_code: array{query_parameter: bool, value: string|null}, cookies: array{fbp: bool, fbc: bool}, filters: array{user_agent: list<string>}} $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         // The XML format is deprecated since Symfony 7.4 and removed in 8.0. Migrate to PHP config before adding Symfony 8 support
@@ -48,6 +48,12 @@ final class SetonoMetaConversionsApiExtension extends Extension
         $container->setAlias('setono_meta_conversions_api.http_client', $config['http_client']);
 
         $loader->load('services.xml');
+
+        foreach (['fbp', 'fbc'] as $cookie) {
+            if (!$config['cookies'][$cookie]) {
+                $container->removeDefinition(sprintf('Setono\\MetaConversionsApiBundle\\EventSubscriber\\Store%sSubscriber', ucfirst($cookie)));
+            }
+        }
 
         if ($config['test_event_code']['query_parameter']) {
             $loader->load('services/conditional/test_event_code.xml');

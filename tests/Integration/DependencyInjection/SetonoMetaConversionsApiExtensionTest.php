@@ -13,6 +13,8 @@ use Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
+use Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber;
+use Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -67,6 +69,29 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
 
         $this->assertContainerBuilderNotHasService(AddEventToTagBagSubscriber::class);
         $this->assertContainerBuilderNotHasService(AddLibraryToTagBagSubscriber::class);
+    }
+
+    #[Test]
+    public function it_registers_the_cookie_subscribers_by_default(): void
+    {
+        $this->load();
+
+        $this->assertContainerBuilderHasService(StoreFbpSubscriber::class);
+        $this->assertContainerBuilderHasService(StoreFbcSubscriber::class);
+    }
+
+    #[Test]
+    public function it_does_not_register_the_cookie_subscribers_when_they_are_disabled(): void
+    {
+        $this->load([
+            'cookies' => [
+                'fbp' => false,
+                'fbc' => false,
+            ],
+        ]);
+
+        $this->assertContainerBuilderNotHasService(StoreFbpSubscriber::class);
+        $this->assertContainerBuilderNotHasService(StoreFbcSubscriber::class);
     }
 
     #[Test]
