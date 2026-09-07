@@ -44,7 +44,7 @@ final class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInter
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['filter', -875],
+            ConversionsApiEventRaised::class => ['filter', ConversionsApiEventRaised::PRIORITY_FILTER + 25],
         ];
     }
 

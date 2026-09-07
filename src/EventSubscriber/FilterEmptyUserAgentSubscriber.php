@@ -12,7 +12,7 @@ final class FilterEmptyUserAgentSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['filter', -850],
+            ConversionsApiEventRaised::class => ['filter', ConversionsApiEventRaised::PRIORITY_FILTER + 50],
         ];
     }
 

@@ -25,7 +25,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['add', -1000],
+            ConversionsApiEventRaised::class => ['add', ConversionsApiEventRaised::PRIORITY_SEND],
         ];
     }
 

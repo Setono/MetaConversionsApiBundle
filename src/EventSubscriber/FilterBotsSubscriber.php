@@ -17,7 +17,7 @@ final class FilterBotsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['filter', -900],
+            ConversionsApiEventRaised::class => ['filter', ConversionsApiEventRaised::PRIORITY_FILTER],
         ];
     }
 
