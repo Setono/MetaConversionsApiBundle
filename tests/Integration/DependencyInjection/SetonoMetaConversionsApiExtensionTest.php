@@ -13,6 +13,7 @@ use Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
+use Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 
 #[CoversClass(SetonoMetaConversionsApiExtension::class)]
@@ -43,6 +44,8 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.filters.user_agent', []);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.test_event_code.value', null);
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.test_event_code.query_parameter', false);
     }
 
     #[Test]
@@ -73,6 +76,40 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
         // Without this tag the cached values survive between requests in worker mode runtimes
         $this->assertContainerBuilderHasServiceDefinitionWithTag(CachedFbcContext::class, 'kernel.reset', ['method' => 'reset']);
         $this->assertContainerBuilderHasServiceDefinitionWithTag(CachedFbpContext::class, 'kernel.reset', ['method' => 'reset']);
+    }
+
+    #[Test]
+    public function it_does_not_register_the_test_event_code_subscriber_by_default(): void
+    {
+        // kernel.debug is not set in this test, so the query parameter must not be honoured
+        $this->load();
+
+        $this->assertContainerBuilderNotHasService(StoreTestEventCodeSubscriber::class);
+    }
+
+    #[Test]
+    public function it_registers_the_test_event_code_subscriber_when_the_query_parameter_is_enabled(): void
+    {
+        $this->load([
+            'test_event_code' => [
+                'query_parameter' => true,
+            ],
+        ]);
+
+        $this->assertContainerBuilderHasService(StoreTestEventCodeSubscriber::class);
+    }
+
+    #[Test]
+    public function it_treats_an_empty_static_test_event_code_as_none(): void
+    {
+        // An unset env var resolves to an empty string, which must not be sent to Meta as a test event code
+        $this->load([
+            'test_event_code' => [
+                'value' => '',
+            ],
+        ]);
+
+        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.test_event_code.value', null);
     }
 
     #[Test]

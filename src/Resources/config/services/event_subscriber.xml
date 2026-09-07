@@ -40,6 +40,8 @@
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateTestEventCodePropertySubscriber">
             <argument type="service" id="request_stack"/>
+            <argument>%setono_meta_conversions_api.test_event_code.value%</argument>
+            <argument>%setono_meta_conversions_api.test_event_code.query_parameter%</argument>
 
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -59,10 +61,6 @@
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
 
-            <tag name="kernel.event_subscriber"/>
-        </service>
-
-        <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber">
             <tag name="kernel.event_subscriber"/>
         </service>
     </services>

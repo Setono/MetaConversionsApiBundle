@@ -14,10 +14,19 @@ use Webmozart\Assert\Assert;
 
 final class SetonoMetaConversionsApiExtension extends Extension
 {
+    /**
+     * @param array<array-key, mixed> $config
+     */
+    public function getConfiguration(array $config, ContainerBuilder $container): Configuration
+    {
+        // The test event code query parameter is a debugging feature, hence it follows kernel.debug by default
+        return new Configuration($container->hasParameter('kernel.debug') && true === $container->getParameter('kernel.debug'));
+    }
+
     public function load(array $configs, ContainerBuilder $container): void
     {
         /**
-         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, filters: array{user_agent: list<string>}} $config
+         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, test_event_code: array{query_parameter: bool, value: string|null}, filters: array{user_agent: list<string>}} $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         // The XML format is deprecated since Symfony 7.4 and removed in 8.0. Migrate to PHP config before adding Symfony 8 support
@@ -30,7 +39,15 @@ final class SetonoMetaConversionsApiExtension extends Extension
         $container->setParameter('setono_meta_conversions_api.pixels', $config['pixels']);
         $container->setParameter('setono_meta_conversions_api.filters.user_agent', $config['filters']['user_agent']);
 
+        $testEventCode = $config['test_event_code']['value'];
+        $container->setParameter('setono_meta_conversions_api.test_event_code.value', '' === $testEventCode ? null : $testEventCode);
+        $container->setParameter('setono_meta_conversions_api.test_event_code.query_parameter', $config['test_event_code']['query_parameter']);
+
         $loader->load('services.xml');
+
+        if ($config['test_event_code']['query_parameter']) {
+            $loader->load('services/conditional/test_event_code.xml');
+        }
 
         if ($config['client_side']['enabled']) {
             $exceptionMessage = 'You need to install the setono/tag-bag-bundle ^3.0 to use the client side tracking';

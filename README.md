@@ -82,6 +82,15 @@ setono_meta_conversions_api:
         - id: '%env(META_PIXEL_ID)%'
           access_token: '%env(META_ACCESS_TOKEN)%'
 
+    # Send events as test events, so they show up under 'Test events' in Meta's event manager instead of counting
+    # as real conversions
+    test_event_code:
+        # If enabled, ?_testEventCode=... sets the test event code for the rest of the visitor's session.
+        # Defaults to the value of kernel.debug, i.e. enabled in dev and disabled in prod
+        query_parameter: '%kernel.debug%'
+        # A static test event code applied to every event, e.g. on a staging environment
+        value: null
+
     filters:
         # Regular expression fragments (no delimiters). Events with a matching user agent are not tracked
         user_agent: []
@@ -138,9 +147,15 @@ Events are posted to the Graph API version of the installed `facebook/php-busine
 
 ## Test the integration
 
-To test the integration you can set the test event code (that you can retrieve from Meta / Facebooks event manager) and
-append it to any url on your website like so:  `https://example.com/?_testEventCode=[YOUR TEST EVENT CODE]` or `https://example.com/?_test_event_code=[YOUR TEST EVENT CODE]`. This code is
-saved in a session and hence all your subsequent requests will be sent with the test event code.
+Take the test event code from Meta / Facebook's event manager and append it to any url on your website:
+`https://example.com/?_testEventCode=[YOUR TEST EVENT CODE]` (or `?_test_event_code=[YOUR TEST EVENT CODE]`). The code
+is saved in the session, so all your subsequent requests are sent with it. Clear it again with an empty value:
+`https://example.com/?_testEventCode=`.
+
+Because anyone who can add a query parameter would otherwise be able to divert their own conversions into the test
+bucket, the query parameter is only honoured when `test_event_code.query_parameter` is enabled. It follows
+`kernel.debug` by default, so it works in `dev` and is off in `prod`. To send *every* event as a test event, for
+instance from a staging environment, set `test_event_code.value` instead.
 
 [ico-version]: https://poser.pugx.org/setono/meta-conversions-api-bundle/v/stable
 [ico-license]: https://poser.pugx.org/setono/meta-conversions-api-bundle/license

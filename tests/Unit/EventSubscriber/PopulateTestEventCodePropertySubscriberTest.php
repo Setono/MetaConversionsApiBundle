@@ -22,7 +22,7 @@ final class PopulateTestEventCodePropertySubscriberTest extends TestCase
     {
         $event = self::event();
 
-        (new PopulateTestEventCodePropertySubscriber(new RequestStack()))->populate($event);
+        (new PopulateTestEventCodePropertySubscriber(new RequestStack(), null, true))->populate($event);
 
         self::assertNull($event->event->testEventCode);
     }
@@ -40,7 +40,7 @@ final class PopulateTestEventCodePropertySubscriberTest extends TestCase
 
         $event = self::event();
 
-        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request)))->populate($event);
+        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request), null, true))->populate($event);
 
         self::assertNull($event->event->testEventCode);
     }
@@ -57,7 +57,7 @@ final class PopulateTestEventCodePropertySubscriberTest extends TestCase
 
         $event = self::event();
 
-        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request)))->populate($event);
+        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request), null, true))->populate($event);
 
         self::assertSame('TEST1234', $event->event->testEventCode);
     }
@@ -74,7 +74,34 @@ final class PopulateTestEventCodePropertySubscriberTest extends TestCase
 
         $event = self::event();
 
-        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request)))->populate($event);
+        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request), null, true))->populate($event);
+
+        self::assertNull($event->event->testEventCode);
+    }
+
+    #[Test]
+    public function it_applies_a_statically_configured_test_event_code(): void
+    {
+        $event = self::event();
+
+        (new PopulateTestEventCodePropertySubscriber(new RequestStack(), 'STATIC1234'))->populate($event);
+
+        self::assertSame('STATIC1234', $event->event->testEventCode);
+    }
+
+    #[Test]
+    public function it_does_not_read_the_session_when_the_query_parameter_is_disabled(): void
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('getName')->willReturn('PHPSESSID');
+        $session->expects(self::never())->method('get');
+
+        $request = new Request([], [], [], ['PHPSESSID' => 'an-existing-session']);
+        $request->setSession($session);
+
+        $event = self::event();
+
+        (new PopulateTestEventCodePropertySubscriber(self::requestStack($request), null, false))->populate($event);
 
         self::assertNull($event->event->testEventCode);
     }
