@@ -61,6 +61,20 @@ final class FilterBotsSubscriberTest extends TestCase
         self::assertFalse($enriched);
     }
 
+    /**
+     * An event raised from a console command or a message handler is not a request, so the bot check does not
+     * apply to it
+     */
+    #[Test]
+    public function it_does_not_stop_a_non_website_event(): void
+    {
+        $event = new ConversionsApiEventRaised(new Event(Event::EVENT_PURCHASE, Event::ACTION_SOURCE_SYSTEM_GENERATED));
+
+        (new FilterBotsSubscriber(self::botDetector(true)))->filter($event);
+
+        self::assertFalse($event->isPropagationStopped());
+    }
+
     private static function botDetector(bool $isBot): BotDetectorInterface
     {
         return new class($isBot) implements BotDetectorInterface {

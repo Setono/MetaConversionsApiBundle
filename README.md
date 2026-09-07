@@ -212,6 +212,23 @@ final class AddCustomerToConversionsApiEvent
 You can also replace a step instead of adding to it: alias `PixelProviderInterface`, `FbpContextInterface` or
 `FbcContextInterface` to your own service, or register a listener above the corresponding populate priority.
 
+### Events that are not raised in a browser request
+
+The pipeline assumes the event belongs to the request being handled. `PopulateRequestPropertiesSubscriber` therefore
+fills in the source url, client ip and user agent of the current request, and the bot and user agent filters only
+apply to events whose `actionSource` is `website` (the default).
+
+For an event raised from a console command, a message handler or an incoming webhook, set another action source so
+the filters leave it alone:
+
+```php
+$event = new Event(Event::EVENT_PURCHASE, Event::ACTION_SOURCE_SYSTEM_GENERATED);
+```
+
+If such an event is raised while handling an HTTP request, for instance a webhook from your payment provider, the
+request properties still describe *that* request, not the customer. Overwrite them in a listener above
+`PRIORITY_POPULATE` when they matter.
+
 ## Graph API version
 
 Events are posted to the Graph API version of the installed `facebook/php-business-sdk` package (the SDK reads
