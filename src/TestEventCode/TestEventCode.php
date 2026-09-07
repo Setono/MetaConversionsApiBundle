@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Setono\MetaConversionsApiBundle;
+namespace Setono\MetaConversionsApiBundle\TestEventCode;
 
 /**
  * Names shared by the subscribers that store and read the test event code

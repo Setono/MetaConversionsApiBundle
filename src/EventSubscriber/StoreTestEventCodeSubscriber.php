@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
-use Setono\MetaConversionsApiBundle\TestEventCode;
+use Setono\MetaConversionsApiBundle\TestEventCode\TestEventCode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
