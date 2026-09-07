@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
+use Setono\MetaConversionsApiBundle\TestEventCode\TestEventCode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class PopulateTestEventCodePropertySubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        /** A static test event code applied to every event, configured with test_event_code.value */
+        private readonly ?string $testEventCode = null,
+        /** Whether the test event code stored by StoreTestEventCodeSubscriber should be applied */
+        private readonly bool $readFromSession = false,
+    ) {
     }
 
     public static function getSubscribedEvents(): array
@@ -23,6 +29,16 @@ final class PopulateTestEventCodePropertySubscriber implements EventSubscriberIn
 
     public function populate(ConversionsApiEventRaised $event): void
     {
+        if (null !== $this->testEventCode) {
+            $event->event->testEventCode = $this->testEventCode;
+
+            return;
+        }
+
+        if (!$this->readFromSession) {
+            return;
+        }
+
         $request = $this->requestStack->getMainRequest();
 
         // Reading from a session that has not been started yet starts it. That would give every anonymous visitor a
@@ -32,8 +48,8 @@ final class PopulateTestEventCodePropertySubscriber implements EventSubscriberIn
             return;
         }
 
-        $testEventCode = $request->getSession()->get('smca_test_event_code');
-        if (!is_string($testEventCode)) {
+        $testEventCode = $request->getSession()->get(TestEventCode::SESSION_KEY);
+        if (!is_string($testEventCode) || '' === $testEventCode) {
             return;
         }
 

@@ -12,6 +12,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 final class Configuration implements ConfigurationInterface
 {
+    public function __construct(private readonly bool $debug = false)
+    {
+    }
+
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('setono_meta_conversions_api');
@@ -58,6 +62,20 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
                         ->scalarNode('access_token')->isRequired()->cannotBeEmpty()->end()
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('test_event_code')
+                ->info('Send events as test events, see https://developers.facebook.com/docs/marketing-api/conversions-api/using-the-api#testEvents')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('query_parameter')
+                        ->info('If enabled, the _testEventCode/_test_event_code query parameter sets the test event code for the rest of the visitor\'s session. Defaults to the value of kernel.debug')
+                        ->defaultValue($this->debug)
+                    ->end()
+                    ->scalarNode('value')
+                        ->info('A static test event code applied to every event, e.g. on a staging environment')
+                        ->defaultNull()
                     ->end()
                 ->end()
             ->end()

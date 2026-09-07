@@ -75,6 +75,16 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Test event code
+
+The `_testEventCode` / `_test_event_code` query parameter is no longer honoured unconditionally.
+
+- It now requires `test_event_code.query_parameter`, which defaults to `%kernel.debug%`. Set it to `true` explicitly
+  if you relied on it in `prod`.
+- An empty value (`?_testEventCode=`) now clears the stored code instead of sending an empty one.
+- Applications without session support no longer get a `SessionNotFoundException` from the query parameter.
+- New `test_event_code.value` option applies a static test event code to every event.
+
 ## Conditional services
 
 Services are only registered when the corresponding side is enabled, instead of being registered and checking a flag
