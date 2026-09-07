@@ -230,6 +230,42 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
     #[Test]
     public function it_sends_events_through_the_applications_http_client(): void
     {
+        $event = new Event(Event::EVENT_VIEW_CONTENT);
+        $event->pixels = [new Pixel('1234', 's3cr3t')];
+
+        self::recordingClient()->sendEvent($event);
+
+        // The Graph API version follows whichever facebook/php-business-sdk is installed
+        self::assertSame(
+            [['POST', sprintf('https://graph.facebook.com/v%s/1234/events', ApiConfig::APIVersion)]],
+            RecordingHttpClientFactory::$requests,
+        );
+    }
+
+    /**
+     * The README promises that a pixel without an access token, one that is only used client side for instance, is
+     * skipped server side while the event still reaches the others. The bundle no longer does that itself, the SDK
+     * client does, so this pins the promise to the real client rather than to a double
+     */
+    #[Test]
+    public function it_skips_a_pixel_without_an_access_token_and_still_sends_to_the_others(): void
+    {
+        $event = new Event(Event::EVENT_VIEW_CONTENT);
+        $event->pixels = [new Pixel('1111'), new Pixel('1234', 's3cr3t')];
+
+        self::recordingClient()->sendEvent($event);
+
+        self::assertSame(
+            [['POST', sprintf('https://graph.facebook.com/v%s/1234/events', ApiConfig::APIVersion)]],
+            RecordingHttpClientFactory::$requests,
+        );
+    }
+
+    /**
+     * Boots a kernel whose PSR-18 client records requests instead of sending them, and returns the SDK client
+     */
+    private static function recordingClient(): ClientInterface
+    {
         RecordingHttpClientFactory::reset();
 
         self::bootKernel(['config' => function (TestKernel $kernel) {
@@ -255,18 +291,10 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        $event = new Event(Event::EVENT_VIEW_CONTENT);
-        $event->pixels = [new Pixel('1234', 's3cr3t')];
-
         $client = self::getContainer()->get('test.conversions_api_client');
         self::assertInstanceOf(ClientInterface::class, $client);
-        $client->sendEvent($event);
 
-        // The Graph API version follows whichever facebook/php-business-sdk is installed
-        self::assertSame(
-            [['POST', sprintf('https://graph.facebook.com/v%s/1234/events', ApiConfig::APIVersion)]],
-            RecordingHttpClientFactory::$requests,
-        );
+        return $client;
     }
 
     #[Test]

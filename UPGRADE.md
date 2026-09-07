@@ -3,7 +3,7 @@
 ## Requirements
 
 - PHP 8.1+ (was 7.4) and Symfony 6.4 or 7.4 (Symfony 5.4, 6.0–6.3 and 7.0–7.3 are no longer supported).
-- `setono/meta-conversions-api-php-sdk` `^1.0` (was `^0.2.1`). Consequences:
+- `setono/meta-conversions-api-php-sdk` `^2.0` (was `^0.2.1`). Consequences:
     - Events are posted to Graph API **v25.0 / v26.0** (whichever `facebook/php-business-sdk` is installed) instead of
       v14.0. The payloads are unchanged.
     - The SDK needs a [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and [PSR-17](https://www.php-fig.org/psr/psr-17/)
@@ -13,6 +13,16 @@
     - `php-http/discovery` ships a Composer plugin. Add `"php-http/discovery": false` (or `true`) to
       `config.allow-plugins` in your `composer.json` to avoid the interactive prompt.
     - `Client::setResponseFactory()` was removed from the SDK. Drop the call if you configured the client manually.
+    - `ClientException` no longer exists. Everything the SDK throws implements
+      `Setono\MetaConversionsApi\Exception\ExceptionInterface`; catch that, or `InvalidArgumentException`,
+      `TransportException` and `ResponseException` specifically. The bundle's handler uses them to tell Messenger what
+      is worth retrying: a transport failure, a 5xx response or an error Meta flags as transient is retried, anything
+      else goes straight to the failure transport.
+    - `ClientInterface` gained `sendPreparedEvent()`, and the bundle now sends server side events through it rather
+      than through `sendEvent()`. If you decorate or replace `Setono\MetaConversionsApi\Client\ClientInterface`,
+      implement it: a decorator that only wraps `sendEvent()` is no longer called for the events the bundle sends.
+    - Until the SDK's 2.0 is stable you have to allow its pre-release in your own `composer.json`, because a stability
+      flag on a dependency's requirement is not inherited: `composer require setono/meta-conversions-api-php-sdk:^2.0@alpha`.
 - `setono/consent-contracts` is now a required dependency. The consent *bundle* (`setono/consent-bundle`) remains optional.
 - `symfony/monolog-bundle` is no longer required by the bundle. The SDK client is wired to the `logger` service when
   it exists.
@@ -45,6 +55,10 @@ To provide pixels from your own source, alias the interface to your service:
 services:
     Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface: '@App\Provider\MyPixelProvider'
 ```
+
+Your provider is now also asked for the access tokens when an event is sent, which may be in a worker long after the
+request is gone, see [The SendEvent command changed shape](#the-sendevent-command-changed-shape). It therefore has to
+return the pixels, with their tokens, when there is no request.
 
 ## Messenger bus
 
@@ -81,6 +95,42 @@ Enabling client side tracking without the tag bag bundle now throws `\LogicExcep
 `\InvalidArgumentException`, which is what Symfony uses for "this bundle needs that bundle". Adjust your test if you
 asserted on the old type.
 
+## The SendEvent command changed shape
+
+`SendEvent` no longer carries the `Setono\MetaConversionsApi\Event\Event` object. It carries the SDK's
+`Setono\MetaConversionsApi\Event\PreparedEvent` instead: the payload already normalized and hashed, the pixels and the
+test event code.
+
+```php
+new SendEvent(PreparedEvent $preparedEvent);
+```
+
+Build one from an event with `SendEvent::fromEvent($event)`. The constructor strips the access tokens from the pixels,
+whatever it is given, so there is no way to put one on the transport.
+
+**Why:** when the command is routed to a transport it is written to that transport's storage, and to the failure
+transport when it fails. Previously that storage received the Conversions API access token and every raw email
+address, phone number and name the application had attached, because hashing only happened later inside
+`Client::sendEvent()`. Failure transports are often kept indefinitely, which made that a retention problem too.
+
+The access tokens are added back when the event is sent, from the `PixelProviderInterface`. That call may happen in a
+worker, so if you provide your own pixels, your provider has to return them, with their tokens, when there is no
+request. `SendEventHandler::__construct()` changed accordingly, from `(ClientInterface $client, ?LoggerInterface $logger)`
+to `(ClientInterface $client, PixelProviderInterface $pixelProvider)`. Update the service definition if you decorated
+or redefined it.
+
+When none of an event's pixels has an access token, the SDK refuses to send and the handler tells Messenger not to
+retry, so the message goes to the failure transport, if you have one, where it can be retried once the token is
+configured. Handled synchronously, it is logged as an error instead.
+
+If you wrote your own handler or middleware for `SendEvent`, read `$message->preparedEvent` (its `payload`, `pixels`
+and `testEventCode`) instead of `$message->event`.
+
+**Deploying:** a `SendEvent` that 0.1.x wrote to a transport still has the old shape and cannot be handled by this
+release. It fails, is retried, and ends up in the failure transport, its body still holding the access token and the
+raw personal data. Stop the workers and let the transport drain on the old release before deploying, and remove
+whatever is left in the failure transport afterwards with `messenger:failed:remove`.
+
 ## Removed container parameters
 
 `setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No
@@ -93,7 +143,7 @@ which is what enrichment listeners need, but the properties can no longer be swa
 ## Failures no longer propagate
 
 `DispatchOnCommandBusSubscriber` catches and logs anything thrown while dispatching, at error level on the
-`setono_meta_conversions_api` channel. Previously a synchronously handled command let a `ClientException` from the SDK
+`setono_meta_conversions_api` channel. Previously a synchronously handled command let an exception from the SDK
 propagate out of `EventDispatcher::dispatch()` into the controller, so an expired access token or an outage at Meta
 returned a 500 to the visitor.
 
@@ -115,9 +165,9 @@ registered a listener between the old and the new filter positions expecting it 
 ## Pixel access token
 
 `pixels[].access_token` is no longer required. Client side tracking only needs the pixel id, so a client-side-only
-setup no longer has to configure a dummy token. Server side, a pixel without an access token is skipped and logged as
-a warning instead of being posted to Meta, rejected with a 400 and retried by Messenger until it lands in the failure
-transport.
+setup no longer has to configure a dummy token. Server side, a pixel without an access token is skipped, and the SDK
+logs an error naming it, instead of it being posted to Meta, rejected with a 400 and retried by Messenger until it
+lands in the failure transport.
 
 ## Test event code
 

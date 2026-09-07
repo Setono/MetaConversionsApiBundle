@@ -92,6 +92,20 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
     }
 
     #[Test]
+    public function it_rejects_the_same_pixel_id_twice(): void
+    {
+        // The access token is resolved by pixel id when the event is sent, so a second entry would silently win
+        $this->expectException(InvalidConfigurationException::class);
+
+        $this->load([
+            'pixels' => [
+                ['id' => '1234', 'access_token' => 'first'],
+                ['id' => '1234', 'access_token' => 'second'],
+            ],
+        ]);
+    }
+
+    #[Test]
     public function it_accepts_a_pixel_without_an_access_token(): void
     {
         // Client side tracking only renders fbq() calls, which need the pixel id and nothing else

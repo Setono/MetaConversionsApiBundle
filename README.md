@@ -88,9 +88,10 @@ setono_meta_conversions_api:
         message_bus: messenger.default_bus
 
     # The pixels to send events to (empty by default). Alternatively provide pixels from your own source by
-    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service.
+    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service. It is also asked
+    # for the access tokens when an event is sent, which may be in a worker, so it has to work without a request.
     # The access token is only needed for server side tracking: client side tracking renders fbq() calls, which
-    # only need the pixel id. A pixel without an access token is skipped server side, with a warning in the log
+    # only need the pixel id. A pixel without an access token is skipped server side, with an error in the log
     pixels:
         - id: '%env(META_PIXEL_ID)%'
           access_token: '%env(META_ACCESS_TOKEN)%'
@@ -136,7 +137,13 @@ framework:
 Every command the bundle dispatches implements
 `Setono\MetaConversionsApiBundle\Message\Command\CommandInterface`, so you can route them as a group instead.
 
-With a transport, Messenger also retries a failed send and moves it to the failure transport when it keeps failing.
+With a transport, Messenger also retries a send that can still succeed, i.e. a network failure, a server error at Meta
+or an error Meta itself flags as transient, and moves it to the failure transport when it keeps failing. A send that
+a retry cannot fix, an invalid access token for instance, goes to the failure transport straight away.
+
+What ends up in the transport is the SDK's `PreparedEvent`: its payload is already normalised and hashed, and the
+bundle strips the access tokens from its pixels before dispatching. They are added back when the event is sent, from
+your `PixelProviderInterface`, so a provider of your own has to work in a worker too, where there is no request.
 
 Either way, a send that fails is logged as an error and never propagates into the response, so an expired access
 token or an outage at Meta cannot break the page.
@@ -292,8 +299,8 @@ and phone numbers are never sent, and they are not written to the Messenger tran
 ### Why did my event not show up?
 
 Every listener that drops an event says so at debug level on the `setono_meta_conversions_api` Monolog channel: the
-bot filter, the user agent filters, the no-pixels check, and each of the three consent gates. The send handler logs a
-warning when a pixel has no access token.
+bot filter, the user agent filters, the no-pixels check, and each of the three consent gates. The SDK client logs an
+error on the same channel when it skips a pixel without an access token.
 
 ```yaml
 # config/packages/monolog.yaml
