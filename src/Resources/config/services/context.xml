@@ -9,6 +9,9 @@
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\CookieBasedFbcContext">
             <argument type="service" id="request_stack"/>
+            <argument type="service" id="logger" on-invalid="null"/>
+
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext"
