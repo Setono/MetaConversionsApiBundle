@@ -12,7 +12,7 @@ final class StopPropagationIfNoPixelsHasBeenAddedSubscriber implements EventSubs
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['filter', -950],
+            ConversionsApiEventRaised::class => ['filter', ConversionsApiEventRaised::PRIORITY_SEND + 50],
         ];
     }
 

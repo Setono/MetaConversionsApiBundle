@@ -17,7 +17,7 @@ final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterf
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['populate', 1000],
+            ConversionsApiEventRaised::class => ['populate', ConversionsApiEventRaised::PRIORITY_POPULATE],
         ];
     }
 

@@ -142,6 +142,75 @@ final class YourService
 }
 ```
 
+## How it works
+
+Dispatching a `ConversionsApiEventRaised` runs the event through a pipeline of listeners. The bundle populates the
+event first, then leaves a gap for your own listeners, then filters and sends:
+
+| Priority                              | Listener                                          | What it does                                            |
+|---------------------------------------|---------------------------------------------------|---------------------------------------------------------|
+| `PRIORITY_POPULATE` (1000)            | `PopulateRequestPropertiesSubscriber`             | Source url, client ip and user agent from the request   |
+| 900                                   | `PopulateFbpAndFbcPropertiesSubscriber`           | `fbp` and `fbc`                                         |
+| 800                                   | `PopulateTestEventCodePropertySubscriber`         | Test event code                                         |
+| 700                                   | `PopulatePixelsSubscriber`                        | Pixels from the pixel provider                          |
+| **`PRIORITY_ENRICH` (0)**             | **your listeners**                                | **Email, phone, external id, custom data**              |
+| -850                                  | `FilterEmptyUserAgentSubscriber`                  | Stops events without a user agent                       |
+| -875                                  | `FilterConfiguredUserAgentsSubscriber`            | Stops events matching `filters.user_agent`              |
+| `PRIORITY_FILTER` (-900)              | `FilterBotsSubscriber`                            | Stops events from bots                                  |
+| -950                                  | `StopPropagationIfNoPixelsHasBeenAddedSubscriber` | Stops events without pixels                             |
+| `PRIORITY_SEND` (-1000)               | `AddEventToTagBagSubscriber`                      | Renders the `fbq()` calls (client side)                 |
+| `PRIORITY_SEND` (-1000)               | `DispatchOnCommandBusSubscriber`                  | Dispatches `SendEvent` (server side)                    |
+
+Two things follow from this:
+
+- **Enrich at `PRIORITY_ENRICH`**, which is the default priority of any listener. Everything the bundle knows about
+  the request is populated by then, and nothing has been filtered or sent yet.
+- **A listener below `PRIORITY_FILTER` may never run**, because the filters stop propagation.
+
+The constants live on `ConversionsApiEventRaised`, so you can position your listener without hard coding a number.
+
+### Enriching an event
+
+Everything the Conversions API can do beyond the browser pixel comes from the user data you attach server side. Meta
+normalises and hashes it for you, so set the raw values:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\EventListener;
+
+use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+
+#[AsEventListener(priority: ConversionsApiEventRaised::PRIORITY_ENRICH)]
+final class AddCustomerToConversionsApiEvent
+{
+    public function __construct(private readonly Security $security)
+    {
+    }
+
+    public function __invoke(ConversionsApiEventRaised $event): void
+    {
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return;
+        }
+
+        $userData = $event->event->userData;
+        $userData->email[] = $user->getEmail();
+        $userData->firstName[] = $user->getFirstName();
+        $userData->lastName[] = $user->getLastName();
+        $userData->externalId[] = (string) $user->getId();
+    }
+}
+```
+
+You can also replace a step instead of adding to it: alias `PixelProviderInterface`, `FbpContextInterface` or
+`FbcContextInterface` to your own service, or register a listener above the corresponding populate priority.
+
 ## Graph API version
 
 Events are posted to the Graph API version of the installed `facebook/php-business-sdk` package (the SDK reads

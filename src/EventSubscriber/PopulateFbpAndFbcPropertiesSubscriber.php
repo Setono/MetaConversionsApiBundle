@@ -20,7 +20,7 @@ final class PopulateFbpAndFbcPropertiesSubscriber implements EventSubscriberInte
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['populate', 900],
+            ConversionsApiEventRaised::class => ['populate', ConversionsApiEventRaised::PRIORITY_POPULATE - 100],
         ];
     }
 

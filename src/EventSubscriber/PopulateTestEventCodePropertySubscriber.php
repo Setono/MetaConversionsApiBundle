@@ -23,7 +23,7 @@ final class PopulateTestEventCodePropertySubscriber implements EventSubscriberIn
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['populate', 800],
+            ConversionsApiEventRaised::class => ['populate', ConversionsApiEventRaised::PRIORITY_POPULATE - 200],
         ];
     }
 

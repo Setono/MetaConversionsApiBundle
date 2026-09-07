@@ -9,9 +9,42 @@ use Symfony\Contracts\EventDispatcher\Event as StoppableEvent;
 
 /**
  * Dispatch this event onto the EventDispatcher and everything will be handled for you
+ *
+ * The bundle's own listeners run in four bands. Use the constants below to position your own listener relative to
+ * them instead of hard coding a number:
+ *
+ * | Priority                       | What happens                                                          |
+ * |--------------------------------|-----------------------------------------------------------------------|
+ * | PRIORITY_POPULATE (and below)  | The bundle fills in request properties, fbp/fbc, test event code, pixels |
+ * | PRIORITY_ENRICH                | Your listeners add user data and custom data                          |
+ * | PRIORITY_FILTER                | The bundle drops events it should not track (bots, filtered user agents) |
+ * | PRIORITY_SEND                  | The bundle renders the client side tags and dispatches the command      |
+ *
+ * A listener below PRIORITY_FILTER may never run, because the filters stop propagation
  */
 final class ConversionsApiEventRaised extends StoppableEvent
 {
+    /**
+     * The bundle populates the event from the current request at this priority and just below it
+     */
+    public const PRIORITY_POPULATE = 1000;
+
+    /**
+     * The priority your own listeners should use. Everything the bundle knows about the request is populated by
+     * now, and nothing has been filtered or sent yet. This is the default priority of an event listener
+     */
+    public const PRIORITY_ENRICH = 0;
+
+    /**
+     * The bundle decides here whether the event should be tracked at all
+     */
+    public const PRIORITY_FILTER = -900;
+
+    /**
+     * The bundle hands the event to the tag bag and the command bus at this priority
+     */
+    public const PRIORITY_SEND = -1000;
+
     /**
      * @param array<string, mixed> $context
      */

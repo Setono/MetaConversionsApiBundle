@@ -21,7 +21,7 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['dispatch', -1000],
+            ConversionsApiEventRaised::class => ['dispatch', ConversionsApiEventRaised::PRIORITY_SEND],
         ];
     }
 
