@@ -1,0 +1,18 @@
+# Coverage is a gate, not a report: the bundle sat at 46% of lines while most of its bugs lived in the untested
+# half, so a drop should fail the pull request rather than show up as a number nobody reads
+coverage:
+    status:
+        project:
+            default:
+                # A ratchet rather than a fixed number: coverage may not drop below what the base branch has,
+                # whatever that happens to be. A hardcoded target goes stale in both directions
+                target: auto
+                # Small unavoidable dips (a private constructor, a refactor) should not block a merge
+                threshold: 1%
+        patch:
+            default:
+                target: 90%
+
+comment:
+    layout: "condensed_header, diff, files"
+    require_changes: true
