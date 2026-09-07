@@ -75,6 +75,12 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Exception types
+
+Enabling client side tracking without the tag bag bundle now throws `\LogicException` instead of Webmozart's
+`\InvalidArgumentException`, which is what Symfony uses for "this bundle needs that bundle". Adjust your test if you
+asserted on the old type.
+
 ## Removed container parameters
 
 `setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No
