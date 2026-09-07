@@ -6,10 +6,28 @@
         <service id="Setono\MetaConversionsApi\Client\ClientInterface"
                  alias="Setono\MetaConversionsApi\Client\Client"/>
 
+        <!--
+            Without these calls the SDK discovers a PSR-18 client and PSR-17 factories at runtime through
+            php-http/discovery. Wiring the application's own services instead means requests to Meta show up in the
+            profiler, honour the timeouts and options configured for the client, and can be replaced by a
+            MockHttpClient in tests. Each call is dropped when the service it needs is not available, in which case
+            the SDK falls back to discovery
+        -->
         <service id="Setono\MetaConversionsApi\Client\Client">
+            <call method="setHttpClient">
+                <argument type="service" id="setono_meta_conversions_api.http_client" on-invalid="ignore"/>
+            </call>
+            <call method="setRequestFactory">
+                <argument type="service" id="Psr\Http\Message\RequestFactoryInterface" on-invalid="ignore"/>
+            </call>
+            <call method="setStreamFactory">
+                <argument type="service" id="Psr\Http\Message\StreamFactoryInterface" on-invalid="ignore"/>
+            </call>
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore"/>
             </call>
+
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
     </services>
 </container>
