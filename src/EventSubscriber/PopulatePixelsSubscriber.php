@@ -17,7 +17,7 @@ final class PopulatePixelsSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ConversionsApiEventRaised::class => ['populate', ConversionsApiEventRaised::PRIORITY_POPULATE - 300],
+            ConversionsApiEventRaised::class => ['populate', ConversionsApiEventRaised::PRIORITY_ENRICH + 500],
         ];
     }
 

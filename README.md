@@ -152,11 +152,11 @@ event first, then leaves a gap for your own listeners, then filters and sends:
 | `PRIORITY_POPULATE` (1000)            | `PopulateRequestPropertiesSubscriber`             | Source url, client ip and user agent from the request   |
 | 900                                   | `PopulateFbpAndFbcPropertiesSubscriber`           | `fbp` and `fbc`                                         |
 | 800                                   | `PopulateTestEventCodePropertySubscriber`         | Test event code                                         |
-| 700                                   | `PopulatePixelsSubscriber`                        | Pixels from the pixel provider                          |
+| 650                                   | `FilterEmptyUserAgentSubscriber`                  | Stops events without a user agent                       |
+| 625                                   | `FilterConfiguredUserAgentsSubscriber`            | Stops events matching `filters.user_agent`              |
+| `PRIORITY_FILTER` (600)               | `FilterBotsSubscriber`                            | Stops events from bots                                  |
+| 500                                   | `PopulatePixelsSubscriber`                        | Pixels from the pixel provider                          |
 | **`PRIORITY_ENRICH` (0)**             | **your listeners**                                | **Email, phone, external id, custom data**              |
-| -850                                  | `FilterEmptyUserAgentSubscriber`                  | Stops events without a user agent                       |
-| -875                                  | `FilterConfiguredUserAgentsSubscriber`            | Stops events matching `filters.user_agent`              |
-| `PRIORITY_FILTER` (-900)              | `FilterBotsSubscriber`                            | Stops events from bots                                  |
 | -950                                  | `StopPropagationIfNoPixelsHasBeenAddedSubscriber` | Stops events without pixels                             |
 | `PRIORITY_SEND` (-1000)               | `AddEventToTagBagSubscriber`                      | Renders the `fbq()` calls (client side)                 |
 | `PRIORITY_SEND` (-1000)               | `DispatchOnCommandBusSubscriber`                  | Dispatches `SendEvent` (server side)                    |
@@ -164,8 +164,9 @@ event first, then leaves a gap for your own listeners, then filters and sends:
 Two things follow from this:
 
 - **Enrich at `PRIORITY_ENRICH`**, which is the default priority of any listener. Everything the bundle knows about
-  the request is populated by then, and nothing has been filtered or sent yet.
-- **A listener below `PRIORITY_FILTER` may never run**, because the filters stop propagation.
+  the request is populated by then, and traffic the bundle does not want to track has already been discarded, so
+  your listeners never do work for a bot.
+- **A listener below `PRIORITY_ENRICH` may never run**, because propagation can already have been stopped.
 
 The constants live on `ConversionsApiEventRaised`, so you can position your listener without hard coding a number.
 

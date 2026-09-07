@@ -75,6 +75,18 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Event pipeline
+
+`ConversionsApiEventRaised` now carries `PRIORITY_POPULATE`, `PRIORITY_FILTER`, `PRIORITY_ENRICH` and
+`PRIORITY_SEND` constants. Use them instead of hard coded numbers.
+
+The bot and user agent filters moved from -850/-875/-900 to 650/625/600, i.e. **above** the priority your own
+listeners run at, so enrichment is no longer performed for traffic that is discarded straight after. If you
+registered a listener between the old and the new filter positions expecting it to run for every event, move it to
+`PRIORITY_ENRICH`.
+
+`PopulatePixelsSubscriber` moved from 700 to 500 so the filters sit between the request populators and it.
+
 ## Pixel access token
 
 `pixels[].access_token` is no longer required. Client side tracking only needs the pixel id, so a client-side-only

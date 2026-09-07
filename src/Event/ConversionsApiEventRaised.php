@@ -13,14 +13,15 @@ use Symfony\Contracts\EventDispatcher\Event as StoppableEvent;
  * The bundle's own listeners run in four bands. Use the constants below to position your own listener relative to
  * them instead of hard coding a number:
  *
- * | Priority                       | What happens                                                          |
- * |--------------------------------|-----------------------------------------------------------------------|
+ * | Priority                       | What happens                                                            |
+ * |--------------------------------|-------------------------------------------------------------------------|
  * | PRIORITY_POPULATE (and below)  | The bundle fills in request properties, fbp/fbc, test event code, pixels |
- * | PRIORITY_ENRICH                | Your listeners add user data and custom data                          |
  * | PRIORITY_FILTER                | The bundle drops events it should not track (bots, filtered user agents) |
- * | PRIORITY_SEND                  | The bundle renders the client side tags and dispatches the command      |
+ * | PRIORITY_ENRICH                | Your listeners add user data and custom data                            |
+ * | PRIORITY_SEND                  | The bundle renders the client side tags and dispatches the command       |
  *
- * A listener below PRIORITY_FILTER may never run, because the filters stop propagation
+ * Filtering happens before PRIORITY_ENRICH so that the work your listeners do is not spent on traffic that is
+ * discarded anyway. A listener below PRIORITY_ENRICH may never run, because propagation can already be stopped
  */
 final class ConversionsApiEventRaised extends StoppableEvent
 {
@@ -30,15 +31,17 @@ final class ConversionsApiEventRaised extends StoppableEvent
     public const PRIORITY_POPULATE = 1000;
 
     /**
-     * The priority your own listeners should use. Everything the bundle knows about the request is populated by
-     * now, and nothing has been filtered or sent yet. This is the default priority of an event listener
+     * The bundle decides here whether the event should be tracked at all. This runs before PRIORITY_ENRICH so
+     * that enrichment is not performed for bots and other traffic that is discarded anyway
      */
-    public const PRIORITY_ENRICH = 0;
+    public const PRIORITY_FILTER = 600;
 
     /**
-     * The bundle decides here whether the event should be tracked at all
+     * The priority your own listeners should use. Everything the bundle knows about the request is populated by
+     * now, traffic the bundle does not want to track has already been discarded, and nothing has been sent yet.
+     * This is the default priority of an event listener
      */
-    public const PRIORITY_FILTER = -900;
+    public const PRIORITY_ENRICH = 0;
 
     /**
      * The bundle hands the event to the tag bag and the command bus at this priority
