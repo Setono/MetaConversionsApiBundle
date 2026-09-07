@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\BotDetectionBundle\BotDetector\BotDetectorInterface;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
@@ -11,8 +13,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class FilterBotsSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private readonly BotDetectorInterface $botDetector)
-    {
+    private readonly LoggerInterface $logger;
+
+    public function __construct(
+        private readonly BotDetectorInterface $botDetector,
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public static function getSubscribedEvents(): array
@@ -31,6 +38,12 @@ final class FilterBotsSubscriber implements EventSubscriberInterface
         }
 
         if ($this->botDetector->isBotRequest()) {
+            $this->logger->debug('The event {event_name} ({event_id}) was dropped because the request comes from a bot: {user_agent}', [
+                'event_name' => $event->event->eventName,
+                'event_id' => $event->event->eventId,
+                'user_agent' => $event->event->userData->clientUserAgent,
+            ]);
+
             $event->stopPropagation();
         }
     }

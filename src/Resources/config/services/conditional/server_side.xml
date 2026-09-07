@@ -6,8 +6,10 @@
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
             <argument type="service" id="setono_meta_conversions_api.message_bus"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler">

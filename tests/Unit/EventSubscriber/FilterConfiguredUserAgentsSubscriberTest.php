@@ -7,6 +7,7 @@ namespace Setono\MetaConversionsApiBundle\Tests\Unit\EventSubscriber;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Setono\MetaConversionsApiBundle\EventSubscriber\FilterConfiguredUserAgentsSubscriber;
@@ -38,6 +39,18 @@ final class FilterConfiguredUserAgentsSubscriberTest extends TestCase
         $subscriber->filter($event);
 
         self::assertFalse($event->isPropagationStopped());
+    }
+
+    #[Test]
+    public function it_logs_why_the_event_was_dropped(): void
+    {
+        $metaEvent = new Event(Event::EVENT_VIEW_CONTENT);
+        $metaEvent->userData->clientUserAgent = 'i_am_a_bot';
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())->method('debug')->with(self::stringContains('user agent'));
+
+        (new FilterConfiguredUserAgentsSubscriber(['i_am_a_bot'], $logger))->filter(new ConversionsApiEventRaised($metaEvent));
     }
 
     #[Test]

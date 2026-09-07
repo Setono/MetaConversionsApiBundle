@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,13 +16,17 @@ final class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInter
      */
     private readonly ?string $pattern;
 
+    private readonly LoggerInterface $logger;
+
     /**
      * @param list<string> $userAgents Regular expression fragments without delimiters
      *
      * @throws \InvalidArgumentException if the fragments do not compile into a valid regular expression
      */
-    public function __construct(array $userAgents)
+    public function __construct(array $userAgents, ?LoggerInterface $logger = null)
     {
+        $this->logger = $logger ?? new NullLogger();
+
         if ([] === $userAgents) {
             $this->pattern = null;
 
@@ -60,6 +66,12 @@ final class FilterConfiguredUserAgentsSubscriber implements EventSubscriberInter
         }
 
         if (1 === preg_match($this->pattern, $userAgent)) {
+            $this->logger->debug('The event {event_name} ({event_id}) was dropped because the user agent matches the configured filters: {user_agent}', [
+                'event_name' => $event->event->eventName,
+                'event_id' => $event->event->eventId,
+                'user_agent' => $userAgent,
+            ]);
+
             $event->stopPropagation();
         }
     }

@@ -7,17 +7,21 @@
             <argument type="service" id="setono_tag_bag.tag_bag"/>
             <argument type="service" id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber">
             <argument type="service" id="setono_tag_bag.tag_bag"/>
             <argument type="service" id="Setono\MetaConversionsApi\Generator\FbqGeneratorInterface"/>
-            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface" on-invalid="null"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface"/>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
     </services>
 </container>
