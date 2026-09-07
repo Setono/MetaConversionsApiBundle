@@ -75,6 +75,27 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Cookies
+
+New `cookies` options:
+
+```yaml
+setono_meta_conversions_api:
+    cookies:
+        fbp: true
+        fbc: true
+        domain: null      # e.g. example.com
+        lifetime: '+90 days'
+```
+
+The `_fbp` and `_fbc` cookies are now only written on a 2xx or 3xx response and only when at least one pixel is
+available, because every `Set-Cookie` header makes a response uncacheable for shared caches.
+
+The subdomain index encoded in the value (the `1` in `fb.1.…`) is now derived from the domain the cookie is actually
+written on, the same way Meta's parameter builder does it, instead of always being `1`. On a host-only cookie on
+`www.example.com` the value is now `fb.2.…`. Set `cookies.domain` to your registrable domain to get `fb.1.…` and one
+cookie shared between the apex and `www`.
+
 ## The SendEvent command changed shape
 
 `SendEvent` no longer carries the `Setono\MetaConversionsApi\Event\Event` object. It carries the finished payload

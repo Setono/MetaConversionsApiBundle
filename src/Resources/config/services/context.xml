@@ -3,6 +3,11 @@
 <container xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://symfony.com/schema/dic/services"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service id="Setono\MetaConversionsApiBundle\Cookie\CookieDomain">
+            <argument type="service" id="request_stack"/>
+            <argument>%setono_meta_conversions_api.cookies.domain%</argument>
+        </service>
+
         <!-- fbc contexts -->
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface"
                  alias="Setono\MetaConversionsApiBundle\Context\Fbc\CookieBasedFbcContext"/>
@@ -22,6 +27,7 @@
                  decorates="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface" decoration-priority="64">
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext.inner"/>
             <argument type="service" id="request_stack"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Cookie\CookieDomain"/>
         </service>
 
         <!-- fbp contexts -->
@@ -29,6 +35,7 @@
                  alias="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext"/>
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbp\GeneratedFbpContext">
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Cookie\CookieDomain"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext"

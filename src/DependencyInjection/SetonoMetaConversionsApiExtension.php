@@ -26,7 +26,7 @@ final class SetonoMetaConversionsApiExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         /**
-         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, http_client: string, test_event_code: array{query_parameter: bool, value: string|null}, cookies: array{fbp: bool, fbc: bool}, filters: array{user_agent: list<string>}} $config
+         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, http_client: string, test_event_code: array{query_parameter: bool, value: string|null}, cookies: array{fbp: bool, fbc: bool, domain: string|null, lifetime: string}, filters: array{user_agent: list<string>}} $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         // The XML format is deprecated since Symfony 7.4 and removed in 8.0. Migrate to PHP config before adding Symfony 8 support
@@ -38,6 +38,10 @@ final class SetonoMetaConversionsApiExtension extends Extension
         $container->setParameter('setono_meta_conversions_api.server_side.enabled', $config['server_side']['enabled']);
         $container->setParameter('setono_meta_conversions_api.pixels', $config['pixels']);
         $container->setParameter('setono_meta_conversions_api.filters.user_agent', $config['filters']['user_agent']);
+
+        $cookieDomain = $config['cookies']['domain'];
+        $container->setParameter('setono_meta_conversions_api.cookies.domain', '' === $cookieDomain ? null : $cookieDomain);
+        $container->setParameter('setono_meta_conversions_api.cookies.lifetime', $config['cookies']['lifetime']);
 
         $testEventCode = $config['test_event_code']['value'];
         $container->setParameter('setono_meta_conversions_api.test_event_code.value', '' === $testEventCode ? null : $testEventCode);

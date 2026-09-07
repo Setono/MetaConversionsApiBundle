@@ -90,6 +90,12 @@ setono_meta_conversions_api:
     cookies:
         fbp: true
         fbc: true
+        # The domain to write them on. Meta's own pixel uses the registrable domain, so set this to yours if your
+        # site is reachable on both the apex and www, or spans several subdomains. Null scopes them to the current
+        # host, which means apex and www get different cookies
+        domain: null
+        # Anything \DateTimeImmutable understands. Meta keeps these for 90 days
+        lifetime: '+90 days'
 
     # The PSR-18 http client used to send events. Defaults to Symfony's default http client, which means requests
     # to Meta show up in the profiler and honour the options you configured. Point it at a scoped client to give

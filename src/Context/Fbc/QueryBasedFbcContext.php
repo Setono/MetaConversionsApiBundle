@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 
 use Setono\MetaConversionsApi\ValueObject\Fbc;
+use Setono\MetaConversionsApiBundle\Cookie\CookieDomain;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class QueryBasedFbcContext implements FbcContextInterface
@@ -20,6 +21,7 @@ final class QueryBasedFbcContext implements FbcContextInterface
     public function __construct(
         private readonly FbcContextInterface $decorated,
         private readonly RequestStack $requestStack,
+        private readonly CookieDomain $cookieDomain,
     ) {
     }
 
@@ -35,6 +37,7 @@ final class QueryBasedFbcContext implements FbcContextInterface
             return $this->decorated->getFbc();
         }
 
-        return new Fbc($facebookClickId);
+        // The click id is about to be written as a cookie, so it has to say which level it was set at
+        return (new Fbc($facebookClickId))->withSubdomainIndex($this->cookieDomain->subdomainIndex());
     }
 }

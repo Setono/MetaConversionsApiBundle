@@ -11,11 +11,13 @@ use Setono\MetaConversionsApi\Pixel\Pixel;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\CookieDomain;
 use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -123,6 +125,30 @@ final class StoreFbpSubscriberTest extends TestCase
         self::assertNotNull(self::cookie($event));
     }
 
+    #[Test]
+    public function it_writes_a_host_only_cookie_by_default(): void
+    {
+        $event = self::event(new Request(), new Response());
+
+        self::subscriber()->store($event);
+
+        $cookie = self::cookie($event);
+        self::assertNotNull($cookie);
+        self::assertNull($cookie->getDomain());
+    }
+
+    #[Test]
+    public function it_writes_the_cookie_on_the_configured_domain(): void
+    {
+        $event = self::event(new Request(), new Response());
+
+        self::subscriber(domain: 'example.com')->store($event);
+
+        $cookie = self::cookie($event);
+        self::assertNotNull($cookie);
+        self::assertSame('example.com', $cookie->getDomain());
+    }
+
     private static function cookie(ResponseEvent $event): ?Cookie
     {
         foreach ($event->getResponse()->headers->getCookies() as $cookie) {
@@ -137,7 +163,7 @@ final class StoreFbpSubscriberTest extends TestCase
     /**
      * @param list<Pixel>|null $pixels
      */
-    private static function subscriber(?Fbp $fbp = null, bool $consentGranted = true, ?array $pixels = null): StoreFbpSubscriber
+    private static function subscriber(?Fbp $fbp = null, bool $consentGranted = true, ?array $pixels = null, ?string $domain = null): StoreFbpSubscriber
     {
         return new StoreFbpSubscriber(
             new class($fbp ?? new Fbp()) implements FbpContextInterface {
@@ -173,6 +199,7 @@ final class StoreFbpSubscriberTest extends TestCase
                     return $this->pixels;
                 }
             },
+            new CookieDomain(new RequestStack(), $domain),
         );
     }
 
