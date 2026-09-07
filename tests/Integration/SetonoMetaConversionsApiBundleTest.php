@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Setono\MetaConversionsApiBundle\Tests;
+namespace Setono\MetaConversionsApiBundle\Tests\Integration;
 
 use Nyholm\BundleTest\TestKernel;
-use Psr\Container\ContainerInterface;
+use PHPUnit\Framework\Attributes\Test;
 use Setono\BotDetectionBundle\SetonoBotDetectionBundle;
 use Setono\ConsentBundle\SetonoConsentBundle;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
@@ -45,6 +45,9 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
         return TestKernel::class;
     }
 
+    /**
+     * @param array<mixed> $options
+     */
     protected static function createKernel(array $options = []): KernelInterface
     {
         /** @var TestKernel $kernel */
@@ -56,21 +59,17 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
         return $kernel;
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_throws_exception_if_client_side_is_enabled_but_tag_bag_is_not_enabled(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         self::bootKernel();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_boots_with_client_side(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestBundle(SetonoTagBagBundle::class);
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_tag_bag', [
@@ -84,20 +83,17 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         foreach ($this->clientSideServices as $service) {
             self::assertTrue($container->has($service));
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_boots_without_client_side(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_meta_conversions_api', [
                     'client_side' => false,
@@ -105,20 +101,17 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         foreach ($this->clientSideServices as $service) {
             self::assertFalse($container->has($service));
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_boots_with_server_side(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_meta_conversions_api', [
                     'client_side' => false,
@@ -127,20 +120,17 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         foreach ($this->serverSideServices as $service) {
             self::assertTrue($container->has($service));
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_boots_without_server_side(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_meta_conversions_api', [
                     'client_side' => false,
@@ -149,20 +139,17 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         foreach ($this->serverSideServices as $service) {
             self::assertFalse($container->has($service));
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_works_with_consent_bundle(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_meta_conversions_api', [
                     'consent' => true,
@@ -174,21 +161,19 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             $kernel->addTestBundle(SetonoConsentBundle::class);
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         self::assertTrue($container->has(ConsentCheckerInterface::class));
 
         $consentChecker = $container->get(ConsentCheckerInterface::class);
+        self::assertInstanceOf(ConsentCheckerInterface::class, $consentChecker);
         self::assertFalse($consentChecker->isGranted());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function it_works_without_consent_bundle(): void
     {
-        $kernel = self::bootKernel(['config' => function (TestKernel $kernel) {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
             $kernel->addTestConfig(static function (ContainerBuilder $container) {
                 $container->loadFromExtension('setono_meta_conversions_api', [
                     'client_side' => false,
@@ -197,12 +182,12 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
             });
         }]);
 
-        /** @var ContainerInterface $container */
-        $container = $kernel->getContainer()->get('test.service_container');
+        $container = self::getContainer();
 
         self::assertTrue($container->has(ConsentCheckerInterface::class));
 
         $consentChecker = $container->get(ConsentCheckerInterface::class);
+        self::assertInstanceOf(ConsentCheckerInterface::class, $consentChecker);
         self::assertTrue($consentChecker->isGranted());
     }
 }

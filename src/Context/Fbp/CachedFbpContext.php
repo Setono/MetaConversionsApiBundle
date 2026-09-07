@@ -16,9 +16,7 @@ final class CachedFbpContext implements FbpContextInterface
 
     public function getFbp(): Fbp
     {
-        if (null === $this->cached) {
-            $this->cached = $this->decorated->getFbp();
-        }
+        $this->cached ??= $this->decorated->getFbp();
 
         return $this->cached;
     }

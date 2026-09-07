@@ -16,47 +16,60 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('setono_meta_conversions_api');
 
-        $rootNode = $treeBuilder->getRootNode();
+        $children = $treeBuilder->getRootNode()
+            ->addDefaultsIfNotSet()
+            ->children();
 
-        $clientSideDefault = 'canBeEnabled';
-        if (InstalledVersions::isInstalled('setono/tag-bag-bundle') &&
-            InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0')) {
-            $clientSideDefault = 'canBeDisabled';
+        $children
+            ->arrayNode('consent')
+                ->info('If enabled, the bundle will only track events if a consent is granted')
+                ->canBeEnabled()
+                ->children()
+                    ->scalarNode('category')->defaultValue(DefaultConsents::CONSENT_MARKETING)->end()
+                ->end()
+            ->end()
+        ;
+
+        // Client side tracking is enabled by default when the tag bag bundle is installed
+        $clientSide = $children
+            ->arrayNode('client_side')
+            ->info('Configuration for client side tracking');
+
+        if (self::isTagBagBundleInstalled()) {
+            $clientSide->canBeDisabled();
+        } else {
+            $clientSide->canBeEnabled();
         }
 
-        /** @psalm-suppress MixedMethodCall,PossiblyUndefinedMethod,PossiblyNullReference,UndefinedInterfaceMethod */
-        $rootNode
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->arrayNode('consent')
-                    ->info('If enabled, the bundle will only track events if a consent is granted')
-                    ->canBeEnabled()
+        $children
+            ->arrayNode('server_side')
+                ->info('Configuration for server side tracking')
+                ->canBeDisabled()
+            ->end()
+            ->arrayNode('pixels')
+                ->arrayPrototype()
                     ->children()
-                        ->scalarNode('category')->defaultValue(DefaultConsents::CONSENT_MARKETING)->end()
+                        ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('access_token')->isRequired()->cannotBeEmpty()->end()
                     ->end()
                 ->end()
-                ->arrayNode('client_side')
-                    ->info('Configuration for client side tracking')
-                    ->{$clientSideDefault}()
-                ->end()
-                ->arrayNode('server_side')
-                    ->info('Configuration for server side tracking')
-                    ->canBeDisabled()
-                ->end()
-                ->arrayNode('pixels')
-                    ->arrayPrototype()
-                        ->children()
-                            ->scalarNode('id')->isRequired()->cannotBeEmpty()->end()
-                            ->scalarNode('access_token')->isRequired()->cannotBeEmpty()->end()
-                        ->end()
+            ->end()
+            ->arrayNode('filters')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('user_agent')
+                        ->scalarPrototype()->end()
                     ->end()
                 ->end()
-                ->arrayNode('filters')
-                    ->children()
-                        ->arrayNode('user_agent')
-                            ->scalarPrototype()->end()
+            ->end()
         ;
 
         return $treeBuilder;
+    }
+
+    private static function isTagBagBundleInstalled(): bool
+    {
+        return InstalledVersions::isInstalled('setono/tag-bag-bundle') &&
+            InstalledVersions::satisfies(new VersionParser(), 'setono/tag-bag-bundle', '^3.0');
     }
 }

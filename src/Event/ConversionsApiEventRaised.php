@@ -19,9 +19,6 @@ final class ConversionsApiEventRaised extends StoppableEvent
     {
     }
 
-    /**
-     * @psalm-assert-if-true mixed $this->context[$key]
-     */
     public function hasContext(string $key): bool
     {
         return array_key_exists($key, $this->context);
