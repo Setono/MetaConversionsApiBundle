@@ -19,12 +19,11 @@
         "symfony/config": "^6.4 || ^7.4",
         "symfony/dependency-injection": "^6.4 || ^7.4",
         "symfony/event-dispatcher": "^6.4 || ^7.4",
-        "symfony/event-dispatcher-contracts": "^2.5 || ^3.0",
+        "symfony/event-dispatcher-contracts": "^3.0",
         "symfony/http-foundation": "^6.4 || ^7.4",
         "symfony/http-kernel": "^6.4 || ^7.4",
         "symfony/messenger": "^6.4 || ^7.4",
-        "symfony/service-contracts": "^2.5 || ^3.0",
-        "webmozart/assert": "^1.11"
+        "symfony/service-contracts": "^2.5 || ^3.0"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.50",
@@ -47,6 +46,12 @@
         "symfony/framework-bundle": "^6.4 || ^7.4",
         "symfony/http-client": "^6.4 || ^7.4",
         "symfony/twig-bundle": "^6.4 || ^7.4"
+    },
+    "suggest": {
+        "nyholm/psr7": "A PSR-17 implementation, needed by the SDK unless your application already provides one",
+        "setono/consent-bundle": "Handle cookie/GDPR consent, enabling the consent option",
+        "setono/tag-bag-bundle": "Render the Meta pixel and fbq() calls in the browser, enabling client side tracking",
+        "symfony/http-client": "A PSR-18 implementation, needed by the SDK unless your application already provides one"
     },
     "prefer-stable": true,
     "autoload": {

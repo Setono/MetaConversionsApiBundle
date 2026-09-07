@@ -16,6 +16,7 @@ use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber
 use Setono\MetaConversionsApiBundle\EventSubscriber\StoreTestEventCodeSubscriber;
 use Setono\TagBagBundle\SetonoTagBagBundle;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 #[CoversClass(SetonoMetaConversionsApiExtension::class)]
 final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestCase
@@ -56,6 +57,29 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
 
         $this->assertContainerBuilderHasService(AddEventToTagBagSubscriber::class);
         $this->assertContainerBuilderHasService(AddLibraryToTagBagSubscriber::class);
+    }
+
+    #[Test]
+    public function it_explains_itself_when_used_outside_a_symfony_application(): void
+    {
+        // A bare ContainerBuilder has no kernel.bundles, so the bundle cannot tell whether the tag bag bundle is
+        // registered. Symfony's convention for "this needs that" is a LogicException
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('kernel.bundles');
+
+        (new SetonoMetaConversionsApiExtension())->load([['client_side' => true]], new ContainerBuilder());
+    }
+
+    #[Test]
+    public function it_explains_itself_when_the_tag_bag_bundle_is_not_registered(): void
+    {
+        $container = new ContainerBuilder();
+        $container->setParameter('kernel.bundles', []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('SetonoTagBagBundle is not in the list of enabled bundles');
+
+        (new SetonoMetaConversionsApiExtension())->load([['client_side' => true]], $container);
     }
 
     #[Test]
