@@ -42,6 +42,23 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->commandBus->dispatch(new SendEvent($event->event));
+        try {
+            $this->commandBus->dispatch(new SendEvent($event->event));
+        } catch (\Throwable $e) {
+            // Tracking must never take the page down. Two things can throw here:
+            //
+            // 1. The command is handled synchronously, i.e. it is not routed to a transport, and Meta answered with
+            //    an error. An expired access token would otherwise break every page that raises an event.
+            // 2. The command is routed to a transport and the transport itself is unavailable.
+            //
+            // Neither is reachable once the command is routed to a working transport, so a routed setup keeps
+            // Messenger's retry and failure handling untouched
+            $this->logger->error('The event {event_name} ({event_id}) could not be sent to Meta: {message}', [
+                'event_name' => $event->event->eventName,
+                'event_id' => $event->event->eventId,
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+        }
     }
 }

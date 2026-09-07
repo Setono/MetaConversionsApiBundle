@@ -104,11 +104,15 @@ setono_meta_conversions_api:
         user_agent: []
 ```
 
+### Route the command to a transport
+
 Server side events are dispatched on your application's default Messenger bus. The bundle does not register a bus of
 its own, so your bus configuration is left untouched. Point the bundle at another bus with the `server_side.message_bus`
 option if you prefer.
 
-Events are handled synchronously unless you route the command to a transport, which is the recommended setup:
+**Route the command to an async transport.** Without it, Messenger handles the command synchronously, which means the
+http call to Meta happens inside the visitor's request: their page waits for Meta's round trip, and Meta's
+availability becomes your availability.
 
 ```yaml
 # config/packages/messenger.yaml
@@ -117,6 +121,11 @@ framework:
         routing:
             'Setono\MetaConversionsApiBundle\Message\Command\SendEvent': async
 ```
+
+With a transport, Messenger also retries a failed send and moves it to the failure transport when it keeps failing.
+
+Either way, a send that fails is logged as an error and never propagates into the response, so an expired access
+token or an outage at Meta cannot break the page.
 
 ## Usage
 

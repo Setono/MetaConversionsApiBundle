@@ -75,6 +75,16 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Failures no longer propagate
+
+`DispatchOnCommandBusSubscriber` catches and logs anything thrown while dispatching, at error level on the
+`setono_meta_conversions_api` channel. Previously a synchronously handled command let a `ClientException` from the SDK
+propagate out of `EventDispatcher::dispatch()` into the controller, so an expired access token or an outage at Meta
+returned a 500 to the visitor.
+
+This only affects the synchronous path and transport failures. Once the command is routed to a working transport, the
+handler runs in the worker and Messenger's retry and failure handling is untouched.
+
 ## Event pipeline
 
 `ConversionsApiEventRaised` now carries `PRIORITY_POPULATE`, `PRIORITY_FILTER`, `PRIORITY_ENRICH` and
