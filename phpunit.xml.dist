@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="vendor/autoload.php"
-         colors="true" cacheDirectory=".build/phpunit">
+         colors="true" cacheDirectory=".build/phpunit"
+         failOnDeprecation="true" failOnNotice="true" failOnWarning="true">
     <testsuites>
         <testsuite name="unit">
             <directory>tests/Unit</directory>
@@ -10,7 +11,17 @@
             <directory>tests/Integration</directory>
         </testsuite>
     </testsuites>
-    <source>
+
+    <!--
+        restrictDeprecations keeps the report to deprecations this bundle's own code triggers, so an upstream one
+        does not drown ours out and failOnDeprecation can stay on. setono/bot-detection-bundle currently has
+        implicitly nullable parameters, which PHP 8.4 deprecates and PHP 9 will reject.
+
+        Do NOT let PHPUnit migrate this file: the migration renames the attribute to ignoreIndirectDeprecations,
+        which PHPUnit 10.5 rejects. We still need 10.5, because PHPUnit 11 requires PHP 8.2 and this bundle
+        supports 8.1
+    -->
+    <source restrictNotices="true" restrictWarnings="true" restrictDeprecations="true">
         <include>
             <directory suffix=".php">src/</directory>
         </include>
