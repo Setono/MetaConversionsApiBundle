@@ -33,10 +33,10 @@ final class ConversionsApiEventRaisedTest extends TestCase
         PopulateRequestPropertiesSubscriber::class,
         PopulateFbpAndFbcPropertiesSubscriber::class,
         PopulateTestEventCodePropertySubscriber::class,
-        PopulatePixelsSubscriber::class,
         FilterEmptyUserAgentSubscriber::class,
         FilterConfiguredUserAgentsSubscriber::class,
         FilterBotsSubscriber::class,
+        PopulatePixelsSubscriber::class,
         StopPropagationIfNoPixelsHasBeenAddedSubscriber::class,
         AddEventToTagBagSubscriber::class,
         DispatchOnCommandBusSubscriber::class,
@@ -84,13 +84,31 @@ final class ConversionsApiEventRaisedTest extends TestCase
         }
     }
 
+    /**
+     * Bot traffic must be discarded before the application spends anything on enriching the event
+     */
     #[Test]
-    public function filtering_and_sending_happen_after_your_listeners(): void
+    public function the_request_filters_run_before_your_listeners(): void
     {
         foreach ([
             FilterEmptyUserAgentSubscriber::class,
             FilterConfiguredUserAgentsSubscriber::class,
             FilterBotsSubscriber::class,
+        ] as $subscriber) {
+            $priority = self::priority($subscriber);
+
+            self::assertGreaterThan(ConversionsApiEventRaised::PRIORITY_ENRICH, $priority);
+
+            // ... but after the request properties they filter on have been populated
+            self::assertLessThan(self::priority(PopulateRequestPropertiesSubscriber::class), $priority);
+        }
+    }
+
+    #[Test]
+    public function sending_happens_after_your_listeners(): void
+    {
+        foreach ([
+            // Your listeners may add pixels themselves, so this one has to stay late
             StopPropagationIfNoPixelsHasBeenAddedSubscriber::class,
             AddEventToTagBagSubscriber::class,
             DispatchOnCommandBusSubscriber::class,
