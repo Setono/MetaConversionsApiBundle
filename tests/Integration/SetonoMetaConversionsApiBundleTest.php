@@ -147,6 +147,78 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
     }
 
     #[Test]
+    public function it_keeps_the_frameworks_default_message_bus(): void
+    {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
+            $kernel->addTestConfig(static function (ContainerBuilder $container) {
+                $container->loadFromExtension('setono_meta_conversions_api', [
+                    'client_side' => false,
+                ]);
+            });
+        }]);
+
+        $container = self::getContainer();
+
+        // The bundle must not remove the bus the application (and other bundles) rely on
+        self::assertTrue($container->has('messenger.bus.default'));
+    }
+
+    #[Test]
+    public function it_boots_when_the_application_defines_its_own_bus_without_a_default_bus(): void
+    {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
+            $kernel->addTestConfig(static function (ContainerBuilder $container) {
+                $container->loadFromExtension('framework', [
+                    'messenger' => [
+                        'buses' => [
+                            'command.bus' => null,
+                        ],
+                    ],
+                ]);
+                $container->loadFromExtension('setono_meta_conversions_api', [
+                    'client_side' => false,
+                ]);
+            });
+        }]);
+
+        self::assertTrue(self::getContainer()->has(DispatchOnCommandBusSubscriber::class));
+    }
+
+    #[Test]
+    public function it_dispatches_on_the_configured_message_bus(): void
+    {
+        self::bootKernel(['config' => function (TestKernel $kernel) {
+            $kernel->addTestConfig(static function (ContainerBuilder $container) {
+                $container->loadFromExtension('framework', [
+                    'messenger' => [
+                        'default_bus' => 'command.bus',
+                        'buses' => [
+                            'command.bus' => null,
+                            'event.bus' => null,
+                        ],
+                    ],
+                ]);
+                $container->loadFromExtension('setono_meta_conversions_api', [
+                    'client_side' => false,
+                    'server_side' => [
+                        'message_bus' => 'event.bus',
+                    ],
+                ]);
+                $container->setAlias('setono_meta_conversions_api.message_bus.test', 'setono_meta_conversions_api.message_bus')
+                    ->setPublic(true);
+                $container->setAlias('event.bus.test', 'event.bus')->setPublic(true);
+            });
+        }]);
+
+        $container = self::getContainer();
+
+        self::assertSame(
+            $container->get('event.bus.test'),
+            $container->get('setono_meta_conversions_api.message_bus.test'),
+        );
+    }
+
+    #[Test]
     public function it_works_with_consent_bundle(): void
     {
         self::bootKernel(['config' => function (TestKernel $kernel) {

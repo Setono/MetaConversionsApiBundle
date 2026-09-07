@@ -9,16 +9,15 @@ use Composer\Semver\VersionParser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Webmozart\Assert\Assert;
 
-final class SetonoMetaConversionsApiExtension extends Extension implements PrependExtensionInterface
+final class SetonoMetaConversionsApiExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
         /**
-         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool}, pixels: array<array-key, array{id: string, access_token: string}>, filters: array{user_agent: list<string>}} $config
+         * @var array{consent: array{enabled: bool, category: string}, client_side: array{enabled: bool}, server_side: array{enabled: bool, message_bus: string}, pixels: array<array-key, array{id: string, access_token: string}>, filters: array{user_agent: list<string>}} $config
          */
         $config = $this->processConfiguration($this->getConfiguration([], $container), $configs);
         // The XML format is deprecated since Symfony 7.4 and removed in 8.0. Migrate to PHP config before adding Symfony 8 support
@@ -49,18 +48,13 @@ final class SetonoMetaConversionsApiExtension extends Extension implements Prepe
         }
 
         if ($config['server_side']['enabled']) {
+            // The bundle deliberately does _not_ register a Messenger bus of its own: adding an entry to
+            // framework.messenger.buses removes FrameworkBundle's default 'messenger.bus.default' and can even
+            // make the container fail to boot in applications that define a bus without a default_bus.
+            // Instead we alias the bus the application tells us to use.
+            $container->setAlias('setono_meta_conversions_api.message_bus', $config['server_side']['message_bus']);
+
             $loader->load('services/conditional/server_side.xml');
         }
-    }
-
-    public function prepend(ContainerBuilder $container): void
-    {
-        $container->prependExtensionConfig('framework', [
-            'messenger' => [
-                'buses' => [
-                    'setono_meta_conversions_api.command_bus' => null,
-                ],
-            ],
-        ]);
     }
 }

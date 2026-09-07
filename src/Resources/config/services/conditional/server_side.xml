@@ -4,7 +4,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\DispatchOnCommandBusSubscriber">
-            <argument type="service" id="setono_meta_conversions_api.command_bus"/>
+            <argument type="service" id="setono_meta_conversions_api.message_bus"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
 
             <tag name="kernel.event_subscriber"/>
