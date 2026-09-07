@@ -75,6 +75,13 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Pixel access token
+
+`pixels[].access_token` is no longer required. Client side tracking only needs the pixel id, so a client-side-only
+setup no longer has to configure a dummy token. Server side, a pixel without an access token is skipped and logged as
+a warning instead of being posted to Meta, rejected with a 400 and retried by Messenger until it lands in the failure
+transport.
+
 ## Test event code
 
 The `_testEventCode` / `_test_event_code` query parameter is no longer honoured unconditionally.

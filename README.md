@@ -77,7 +77,9 @@ setono_meta_conversions_api:
         message_bus: messenger.default_bus
 
     # The pixels to send events to (empty by default). Alternatively provide pixels from your own source by
-    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service
+    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service.
+    # The access token is only needed for server side tracking: client side tracking renders fbq() calls, which
+    # only need the pixel id. A pixel without an access token is skipped server side, with a warning in the log
     pixels:
         - id: '%env(META_PIXEL_ID)%'
           access_token: '%env(META_ACCESS_TOKEN)%'
