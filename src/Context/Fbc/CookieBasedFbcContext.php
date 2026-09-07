@@ -7,6 +7,7 @@ namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbcContext implements FbcContextInterface
@@ -27,7 +28,7 @@ final class CookieBasedFbcContext implements FbcContextInterface
             return null;
         }
 
-        $cookie = $request->cookies->get('_fbc');
+        $cookie = $request->cookies->get(Cookies::FBC);
         if (!is_string($cookie) || '' === $cookie) {
             return null;
         }

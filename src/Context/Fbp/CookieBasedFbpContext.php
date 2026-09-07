@@ -7,6 +7,7 @@ namespace Setono\MetaConversionsApiBundle\Context\Fbp;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbpContext implements FbpContextInterface
@@ -28,7 +29,7 @@ final class CookieBasedFbpContext implements FbpContextInterface
             return $this->decorated->getFbp();
         }
 
-        $cookie = $request->cookies->get('_fbp');
+        $cookie = $request->cookies->get(Cookies::FBP);
         if (!is_string($cookie) || '' === $cookie) {
             return $this->decorated->getFbp();
         }

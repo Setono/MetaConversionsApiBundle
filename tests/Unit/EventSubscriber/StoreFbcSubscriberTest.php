@@ -1,0 +1,151 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Setono\MetaConversionsApiBundle\Tests\Unit\EventSubscriber;
+
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\TestCase;
+use Setono\MetaConversionsApi\Pixel\Pixel;
+use Setono\MetaConversionsApi\ValueObject\Fbc;
+use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
+use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
+use Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber;
+use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
+#[CoversClass(StoreFbcSubscriber::class)]
+final class StoreFbcSubscriberTest extends TestCase
+{
+    #[Test]
+    public function it_stores_the_click_id(): void
+    {
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response());
+
+        self::subscriber()->store($event);
+
+        $cookie = self::cookie($event);
+        self::assertNotNull($cookie);
+        self::assertStringEndsWith('.IwAR0rmfgHgx', (string) $cookie->getValue());
+        // The browser pixel has to be able to read it
+        self::assertFalse($cookie->isHttpOnly());
+    }
+
+    #[Test]
+    public function it_does_nothing_without_a_click_id_on_the_request(): void
+    {
+        $event = self::event(new Request(), new Response());
+
+        self::subscriber()->store($event);
+
+        self::assertNull(self::cookie($event));
+    }
+
+    #[Test]
+    public function it_does_nothing_without_consent(): void
+    {
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response());
+
+        self::subscriber(consentGranted: false)->store($event);
+
+        self::assertNull(self::cookie($event));
+    }
+
+    #[Test]
+    public function it_does_nothing_without_pixels(): void
+    {
+        // A Set-Cookie header makes the response uncacheable, and there is nowhere to send events to anyway
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response());
+
+        self::subscriber(pixels: [])->store($event);
+
+        self::assertNull(self::cookie($event));
+    }
+
+    #[Test]
+    public function it_does_nothing_when_the_context_has_no_fbc(): void
+    {
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response());
+
+        self::subscriber(fbc: null)->store($event);
+
+        self::assertNull(self::cookie($event));
+    }
+
+    #[Test]
+    public function it_ignores_sub_requests(): void
+    {
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response(), HttpKernelInterface::SUB_REQUEST);
+
+        self::subscriber()->store($event);
+
+        self::assertNull(self::cookie($event));
+    }
+
+    private static function cookie(ResponseEvent $event): ?Cookie
+    {
+        foreach ($event->getResponse()->headers->getCookies() as $cookie) {
+            if (Cookies::FBC === $cookie->getName()) {
+                return $cookie;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param list<Pixel>|null $pixels
+     */
+    private static function subscriber(
+        ?Fbc $fbc = new Fbc('IwAR0rmfgHgx'),
+        bool $consentGranted = true,
+        ?array $pixels = null,
+    ): StoreFbcSubscriber {
+        return new StoreFbcSubscriber(
+            new class($fbc) implements FbcContextInterface {
+                public function __construct(private readonly ?Fbc $fbc)
+                {
+                }
+
+                public function getFbc(): ?Fbc
+                {
+                    return $this->fbc;
+                }
+            },
+            new class($consentGranted) implements ConsentCheckerInterface {
+                public function __construct(private readonly bool $granted)
+                {
+                }
+
+                public function isGranted(): bool
+                {
+                    return $this->granted;
+                }
+            },
+            new class($pixels ?? [new Pixel('1234', 's3cr3t')]) implements PixelProviderInterface {
+                /**
+                 * @param list<Pixel> $pixels
+                 */
+                public function __construct(private readonly array $pixels)
+                {
+                }
+
+                public function getPixels(): array
+                {
+                    return $this->pixels;
+                }
+            },
+        );
+    }
+
+    private static function event(Request $request, Response $response, int $requestType = HttpKernelInterface::MAIN_REQUEST): ResponseEvent
+    {
+        return new ResponseEvent(self::createStub(HttpKernelInterface::class), $request, $requestType, $response);
+    }
+}
