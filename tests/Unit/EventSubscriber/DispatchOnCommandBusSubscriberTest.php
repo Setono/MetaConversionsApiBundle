@@ -34,7 +34,8 @@ final class DispatchOnCommandBusSubscriberTest extends TestCase
 
         self::assertCount(1, $dispatched);
         self::assertInstanceOf(SendEvent::class, $dispatched[0]);
-        self::assertSame($metaEvent, $dispatched[0]->event);
+        self::assertSame($metaEvent->eventName, $dispatched[0]->eventName);
+        self::assertSame($metaEvent->eventId, $dispatched[0]->eventId);
     }
 
     #[Test]

@@ -124,6 +124,16 @@ framework:
 
 With a transport, Messenger also retries a failed send and moves it to the failure transport when it keeps failing.
 
+What ends up in the transport is the finished payload: the user data is already normalised and hashed by the SDK, and
+only pixel ids travel. Access tokens are resolved when the event is sent, through `AccessTokenResolverInterface`,
+whose default implementation reads them from the `pixels` configuration. Alias it if your pixels come from somewhere
+else:
+
+```yaml
+services:
+    Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface: '@App\Provider\MyAccessTokenResolver'
+```
+
 Either way, a send that fails is logged as an error and never propagates into the response, so an expired access
 token or an outage at Meta cannot break the page.
 
