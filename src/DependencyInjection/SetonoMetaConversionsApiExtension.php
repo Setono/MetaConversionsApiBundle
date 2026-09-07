@@ -34,8 +34,6 @@ final class SetonoMetaConversionsApiExtension extends Extension
 
         $container->setParameter('setono_meta_conversions_api.consent.enabled', $config['consent']['enabled']);
         $container->setParameter('setono_meta_conversions_api.consent.category', $config['consent']['category']);
-        $container->setParameter('setono_meta_conversions_api.client_side.enabled', $config['client_side']['enabled']);
-        $container->setParameter('setono_meta_conversions_api.server_side.enabled', $config['server_side']['enabled']);
         $container->setParameter('setono_meta_conversions_api.pixels', $config['pixels']);
         $container->setParameter('setono_meta_conversions_api.filters.user_agent', $config['filters']['user_agent']);
 

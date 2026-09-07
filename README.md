@@ -135,6 +135,9 @@ framework:
             'Setono\MetaConversionsApiBundle\Message\Command\SendEvent': async
 ```
 
+Every command the bundle dispatches implements
+`Setono\MetaConversionsApiBundle\Message\Command\CommandInterface`, so you can route them as a group instead.
+
 With a transport, Messenger also retries a failed send and moves it to the failure transport when it keeps failing.
 
 What ends up in the transport is the finished payload: the user data is already normalised and hashed by the SDK, and
@@ -248,6 +251,20 @@ final class AddCustomerToConversionsApiEvent
 
 You can also replace a step instead of adding to it: alias `PixelProviderInterface`, `FbpContextInterface` or
 `FbcContextInterface` to your own service, or register a listener above the corresponding populate priority.
+
+### Passing context to your own listeners
+
+The second constructor argument of `ConversionsApiEventRaised` carries anything your listeners need but that must
+never be sent to Meta, such as the order the event was raised for. The bundle never reads it.
+
+```php
+$this->eventDispatcher->dispatch(new ConversionsApiEventRaised($event, ['order' => $order]));
+
+// in a listener
+if ($event->hasContext('order')) {
+    $order = $event->getContext('order');
+}
+```
 
 ### Why did my event not show up?
 

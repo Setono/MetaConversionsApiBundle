@@ -43,8 +43,6 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
 
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.consent.enabled', false);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.consent.category', DefaultConsents::CONSENT_MARKETING);
-        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.client_side.enabled', true);
-        $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.server_side.enabled', true);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.pixels', []);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.filters.user_agent', []);
         $this->assertContainerBuilderHasParameter('setono_meta_conversions_api.test_event_code.value', null);
