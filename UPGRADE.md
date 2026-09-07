@@ -75,6 +75,15 @@ anything to `framework.messenger`. `SendEvent` is dispatched on your application
   `?ConsentContextInterface $consentContext` and `bool $consentEnabled` / `bool $clientSideEnabled` /
   `bool $serverSideEnabled` arguments. Adapt subclasses, decorators and custom service definitions.
 
+## Removed container parameters
+
+`setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No
+service used them once the subscribers became conditional, and whether a side is enabled is visible from whether its
+services exist. The `consent.*`, `pixels`, `cookies.*`, `filters.*` and `test_event_code.*` parameters are unchanged.
+
+`ConversionsApiEventRaised::$event` and `::$context` are now `readonly`. The `Event` object itself stays mutable,
+which is what enrichment listeners need, but the properties can no longer be swapped out. `getContext()` is new.
+
 ## Cookies
 
 New `cookies` options:
