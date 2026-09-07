@@ -8,6 +8,8 @@ use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use Setono\Consent\DefaultConsents;
+use Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext;
+use Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext;
 use Setono\MetaConversionsApiBundle\DependencyInjection\SetonoMetaConversionsApiExtension;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
@@ -61,6 +63,16 @@ final class SetonoMetaConversionsApiExtensionTest extends AbstractExtensionTestC
 
         $this->assertContainerBuilderNotHasService(AddEventToTagBagSubscriber::class);
         $this->assertContainerBuilderNotHasService(AddLibraryToTagBagSubscriber::class);
+    }
+
+    #[Test]
+    public function it_tags_the_cached_contexts_as_resettable(): void
+    {
+        $this->load();
+
+        // Without this tag the cached values survive between requests in worker mode runtimes
+        $this->assertContainerBuilderHasServiceDefinitionWithTag(CachedFbcContext::class, 'kernel.reset', ['method' => 'reset']);
+        $this->assertContainerBuilderHasServiceDefinitionWithTag(CachedFbpContext::class, 'kernel.reset', ['method' => 'reset']);
     }
 
     #[Test]

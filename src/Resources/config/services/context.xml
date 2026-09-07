@@ -14,6 +14,8 @@
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext"
                  decorates="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface" decoration-priority="32">
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbc\CachedFbcContext.inner"/>
+
+            <tag name="kernel.reset" method="reset"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext"
@@ -32,6 +34,8 @@
         <service id="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext"
                  decorates="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface" decoration-priority="32">
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbp\CachedFbpContext.inner"/>
+
+            <tag name="kernel.reset" method="reset"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\Context\Fbp\CookieBasedFbpContext"
