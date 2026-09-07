@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 
 use Setono\Consent\DefaultConsents;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -63,6 +64,21 @@ final class Configuration implements ConfigurationInterface
                             ->info('Only needed for server side tracking. Client side tracking renders fbq() calls, which only need the pixel id')
                             ->defaultNull()
                         ->end()
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('cookies')
+                ->info('How the _fbp and _fbc cookies are written')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('domain')
+                        ->info('The domain to write the cookies on, e.g. example.com, so the apex and www share one cookie the way Meta\'s own pixel does. Null scopes them to the current host')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('lifetime')
+                        ->info('Anything \DateTimeImmutable understands. Meta keeps these for 90 days')
+                        ->defaultValue(Cookies::LIFETIME)
+                        ->cannotBeEmpty()
                     ->end()
                 ->end()
             ->end()

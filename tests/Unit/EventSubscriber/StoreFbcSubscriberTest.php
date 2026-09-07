@@ -11,11 +11,13 @@ use Setono\MetaConversionsApi\Pixel\Pixel;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\CookieDomain;
 use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -88,6 +90,18 @@ final class StoreFbcSubscriberTest extends TestCase
         self::assertNull(self::cookie($event));
     }
 
+    #[Test]
+    public function it_writes_the_cookie_on_the_configured_domain(): void
+    {
+        $event = self::event(new Request(['fbclid' => 'IwAR0rmfgHgx']), new Response());
+
+        self::subscriber(domain: 'example.com')->store($event);
+
+        $cookie = self::cookie($event);
+        self::assertNotNull($cookie);
+        self::assertSame('example.com', $cookie->getDomain());
+    }
+
     private static function cookie(ResponseEvent $event): ?Cookie
     {
         foreach ($event->getResponse()->headers->getCookies() as $cookie) {
@@ -106,6 +120,7 @@ final class StoreFbcSubscriberTest extends TestCase
         ?Fbc $fbc = new Fbc('IwAR0rmfgHgx'),
         bool $consentGranted = true,
         ?array $pixels = null,
+        ?string $domain = null,
     ): StoreFbcSubscriber {
         return new StoreFbcSubscriber(
             new class($fbc) implements FbcContextInterface {
@@ -141,6 +156,7 @@ final class StoreFbcSubscriberTest extends TestCase
                     return $this->pixels;
                 }
             },
+            new CookieDomain(new RequestStack(), $domain),
         );
     }
 

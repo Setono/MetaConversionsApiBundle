@@ -81,6 +81,66 @@ Enabling client side tracking without the tag bag bundle now throws `\LogicExcep
 `\InvalidArgumentException`, which is what Symfony uses for "this bundle needs that bundle". Adjust your test if you
 asserted on the old type.
 
+## Cookies
+
+New `cookies` options:
+
+```yaml
+setono_meta_conversions_api:
+    cookies:
+        domain: null      # e.g. example.com
+        lifetime: '+90 days'
+```
+
+The `_fbp` and `_fbc` cookies are now only written when at least one pixel is available, because every `Set-Cookie`
+header makes a response uncacheable for shared caches and there is nothing to send events to anyway.
+
+The subdomain index encoded in the value (the `1` in `fb.1.…`) is now derived from the domain the cookie is actually
+written on, the same way Meta's parameter builder does it, instead of always being `1`. On a host-only cookie on
+`www.example.com` the value is now `fb.2.…`. Set `cookies.domain` to your registrable domain to get `fb.1.…` and one
+cookie shared between the apex and `www`.
+
+## The SendEvent command changed shape
+
+`SendEvent` no longer carries the `Setono\MetaConversionsApi\Event\Event` object. It carries the finished payload
+instead:
+
+```php
+new SendEvent(
+    string $eventName,
+    string $eventId,
+    array $payload,      // already normalized and hashed by the SDK
+    array $pixelIds,     // ids only, no access tokens
+    ?string $testEventCode = null,
+);
+```
+
+Build one from an event with `SendEvent::fromEvent($event)`.
+
+**Why:** when the command is routed to a transport it is written to that transport's storage, and to the failure
+transport when it fails. Previously that storage received the Conversions API access token and every raw email
+address, phone number and name the application had attached, because hashing only happened later inside
+`Client::sendEvent()`. Failure transports are often kept indefinitely, which made that a retention problem too.
+
+Access tokens are now resolved when the event is sent, through the new
+`Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface`. The default implementation reads
+them from the `pixels` configuration. If your pixels come from your own `PixelProviderInterface`, alias the resolver
+as well:
+
+```yaml
+services:
+    Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface: '@App\Provider\MyAccessTokenResolver'
+```
+
+Note that the resolver runs in the worker, so it must not depend on the current request.
+
+If you wrote your own handler or middleware for `SendEvent`, read `$message->payload` and `$message->pixelIds`
+instead of `$message->event`.
+
+`SendEventHandler::__construct()` takes the resolver as its second argument, so its signature changed from
+`(ClientInterface $client, ?LoggerInterface $logger)` to
+`(ClientInterface $client, AccessTokenResolverInterface $accessTokenResolver, ?LoggerInterface $logger)`. Update the
+service definition if you decorated or redefined it.
 ## Removed container parameters
 
 `setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No
