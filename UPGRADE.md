@@ -46,6 +46,11 @@ services:
     Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface: '@App\Provider\MyPixelProvider'
 ```
 
+If you do, alias the access token resolver as well. The tokens your provider returns are no longer carried by
+`SendEvent`, so the worker asks `AccessTokenResolverInterface` for them instead, see
+[The SendEvent command changed shape](#the-sendevent-command-changed-shape). Without it every event is skipped, with
+an error in the log.
+
 ## Messenger bus
 
 The bundle no longer registers a `setono_meta_conversions_api.command_bus` Messenger bus, and it no longer prepends
@@ -81,6 +86,56 @@ Enabling client side tracking without the tag bag bundle now throws `\LogicExcep
 `\InvalidArgumentException`, which is what Symfony uses for "this bundle needs that bundle". Adjust your test if you
 asserted on the old type.
 
+## The SendEvent command changed shape
+
+`SendEvent` no longer carries the `Setono\MetaConversionsApi\Event\Event` object. It carries the finished payload
+instead:
+
+```php
+new SendEvent(
+    string $eventName,
+    string $eventId,
+    array $payload,      // already normalized and hashed by the SDK
+    array $pixelIds,     // ids only, no access tokens
+    ?string $testEventCode = null,
+);
+```
+
+Build one from an event with `SendEvent::fromEvent($event)`.
+
+**Why:** when the command is routed to a transport it is written to that transport's storage, and to the failure
+transport when it fails. Previously that storage received the Conversions API access token and every raw email
+address, phone number and name the application had attached, because hashing only happened later inside
+`Client::sendEvent()`. Failure transports are often kept indefinitely, which made that a retention problem too.
+
+Access tokens are now resolved when the event is sent, through the new
+`Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface`. The default implementation reads
+them from the `pixels` configuration. If your pixels come from your own `PixelProviderInterface`, alias the resolver
+as well:
+
+```yaml
+services:
+    Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface: '@App\Provider\MyAccessTokenResolver'
+```
+
+Note that the resolver runs in the worker, so it must not depend on the current request.
+
+If you wrote your own handler or middleware for `SendEvent`, read `$message->payload` and `$message->pixelIds`
+instead of `$message->event`.
+
+**Deploying:** a `SendEvent` that 0.1.x wrote to a transport still has the old shape. The new handler cannot process
+it and throws an unrecoverable exception, so such a message goes straight to the failure transport, where its body
+still holds the access token and the raw personal data. Stop the workers and let the transport drain on the old
+release before deploying, and retry or remove whatever is left in the failure transport (`messenger:failed:retry` on
+the old release, otherwise `messenger:failed:remove`), because it cannot be retried on the new one.
+
+Also new: when none of an event's pixels has an access token, the handler logs at **error** level instead of returning
+quietly after per-pixel warnings, because a stock production Monolog setup never writes a warning.
+
+`SendEventHandler::__construct()` takes the resolver as its second argument, so its signature changed from
+`(ClientInterface $client, ?LoggerInterface $logger)` to
+`(ClientInterface $client, AccessTokenResolverInterface $accessTokenResolver, ?LoggerInterface $logger)`. Update the
+service definition if you decorated or redefined it.
 ## Removed container parameters
 
 `setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No

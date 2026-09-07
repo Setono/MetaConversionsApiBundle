@@ -13,6 +13,7 @@ use Setono\ConsentBundle\SetonoConsentBundle;
 use Setono\MetaConversionsApi\Client\ClientInterface;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApi\Pixel\Pixel;
+use Setono\MetaConversionsApiBundle\AccessTokenResolver\ConfigurationBasedAccessTokenResolver;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddEventToTagBagSubscriber;
 use Setono\MetaConversionsApiBundle\EventSubscriber\AddLibraryToTagBagSubscriber;
@@ -46,6 +47,7 @@ final class SetonoMetaConversionsApiBundleTest extends KernelTestCase
         $this->serverSideServices = [
             DispatchOnCommandBusSubscriber::class,
             SendEventHandler::class,
+            ConfigurationBasedAccessTokenResolver::class,
         ];
     }
 
