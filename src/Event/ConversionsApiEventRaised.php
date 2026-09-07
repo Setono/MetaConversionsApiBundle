@@ -49,14 +49,23 @@ final class ConversionsApiEventRaised extends StoppableEvent
     public const PRIORITY_SEND = -1000;
 
     /**
-     * @param array<string, mixed> $context
+     * @param Event $event The event that will be rendered client side and sent server side. Listeners are expected
+     *                     to mutate it, which is how enrichment works
+     * @param array<string, mixed> $context Anything your own listeners need but that must not be sent to Meta, for
+     *                                      instance the order or the customer the event was raised for. The bundle
+     *                                      never reads it
      */
-    public function __construct(public Event $event, public array $context = [])
+    public function __construct(public readonly Event $event, public readonly array $context = [])
     {
     }
 
     public function hasContext(string $key): bool
     {
         return array_key_exists($key, $this->context);
+    }
+
+    public function getContext(string $key, mixed $default = null): mixed
+    {
+        return $this->context[$key] ?? $default;
     }
 }
