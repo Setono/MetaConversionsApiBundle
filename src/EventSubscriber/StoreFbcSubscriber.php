@@ -6,6 +6,7 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\CookieDomain;
 use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,6 +25,8 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
         private readonly FbcContextInterface $fbcContext,
         private readonly ConsentCheckerInterface $consentChecker,
         private readonly PixelProviderInterface $pixelProvider,
+        private readonly CookieDomain $cookieDomain,
+        private readonly string $lifetime = Cookies::LIFETIME,
     ) {
     }
 
@@ -70,7 +73,9 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
         $response->headers->setCookie(Cookie::create(
             Cookies::FBC,
             $fbc->value(),
-            new \DateTimeImmutable(Cookies::LIFETIME),
+            new \DateTimeImmutable($this->lifetime),
+            '/',
+            $this->cookieDomain->domain(),
         )->withHttpOnly(false));  // we need this to allow the js library to also use the cookie value
     }
 }

@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\QueryBasedFbcContext;
+use Setono\MetaConversionsApiBundle\Cookie\CookieDomain;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -22,7 +23,7 @@ final class QueryBasedFbcContextTest extends TestCase
     {
         $fbc = new Fbc('decorated');
 
-        $context = new QueryBasedFbcContext(self::decorated($fbc), new RequestStack());
+        $context = new QueryBasedFbcContext(self::decorated($fbc), new RequestStack(), new CookieDomain(new RequestStack()));
 
         self::assertSame($fbc, $context->getFbc());
     }
@@ -31,7 +32,7 @@ final class QueryBasedFbcContextTest extends TestCase
     #[DataProvider('validClickIds')]
     public function it_uses_a_valid_click_id_from_the_query(string $clickId): void
     {
-        $context = new QueryBasedFbcContext(self::decorated(null), self::requestStack($clickId));
+        $context = new QueryBasedFbcContext(self::decorated(null), self::requestStack($clickId), new CookieDomain(new RequestStack()));
 
         $fbc = $context->getFbc();
 
@@ -56,7 +57,7 @@ final class QueryBasedFbcContextTest extends TestCase
     {
         $decorated = new Fbc('decorated');
 
-        $context = new QueryBasedFbcContext(self::decorated($decorated), self::requestStack($clickId));
+        $context = new QueryBasedFbcContext(self::decorated($decorated), self::requestStack($clickId), new CookieDomain(new RequestStack()));
 
         self::assertSame($decorated, $context->getFbc());
     }
@@ -71,6 +72,21 @@ final class QueryBasedFbcContextTest extends TestCase
         yield 'html' => ['<script>alert(1)</script>'];
         yield 'whitespace' => ['abc def'];
         yield 'dot' => ['fb.1.123.abc'];
+    }
+
+    #[Test]
+    public function it_records_the_level_the_cookie_will_be_written_at(): void
+    {
+        $context = new QueryBasedFbcContext(
+            self::decorated(null),
+            self::requestStack('IwAR0rmfgHgx'),
+            new CookieDomain(new RequestStack(), 'www.example.com'),
+        );
+
+        $fbc = $context->getFbc();
+
+        self::assertInstanceOf(Fbc::class, $fbc);
+        self::assertSame(2, $fbc->getSubdomainIndex());
     }
 
     private static function decorated(?Fbc $fbc): FbcContextInterface

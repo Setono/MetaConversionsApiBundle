@@ -7,6 +7,7 @@ namespace Setono\MetaConversionsApiBundle\DependencyInjection;
 use Composer\InstalledVersions;
 use Composer\Semver\VersionParser;
 use Setono\Consent\DefaultConsents;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -74,6 +75,15 @@ final class Configuration implements ConfigurationInterface
                 ->children()
                     ->booleanNode('fbp')->defaultTrue()->end()
                     ->booleanNode('fbc')->defaultTrue()->end()
+                    ->scalarNode('domain')
+                        ->info('The domain to write the cookies on, e.g. example.com, so the apex and www share one cookie the way Meta\'s own pixel does. Null scopes them to the current host')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('lifetime')
+                        ->info('Anything \DateTimeImmutable understands. Meta keeps these for 90 days')
+                        ->defaultValue(Cookies::LIFETIME)
+                        ->cannotBeEmpty()
+                    ->end()
                 ->end()
             ->end()
             ->scalarNode('http_client')
