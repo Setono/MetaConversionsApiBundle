@@ -81,6 +81,15 @@ Enabling client side tracking without the tag bag bundle now throws `\LogicExcep
 `\InvalidArgumentException`, which is what Symfony uses for "this bundle needs that bundle". Adjust your test if you
 asserted on the old type.
 
+## Removed container parameters
+
+`setono_meta_conversions_api.client_side.enabled` and `setono_meta_conversions_api.server_side.enabled` are gone. No
+service used them once the subscribers became conditional, and whether a side is enabled is visible from whether its
+services exist. The `consent.*`, `pixels`, `filters.*` and `test_event_code.*` parameters are unchanged.
+
+`ConversionsApiEventRaised::$event` and `::$context` are now `readonly`. The `Event` object itself stays mutable,
+which is what enrichment listeners need, but the properties can no longer be swapped out. `getContext()` is new.
+
 ## Failures no longer propagate
 
 `DispatchOnCommandBusSubscriber` catches and logs anything thrown while dispatching, at error level on the
