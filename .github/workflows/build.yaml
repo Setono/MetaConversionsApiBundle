@@ -186,7 +186,7 @@ jobs:
                     SYMFONY_REQUIRE: "${{ matrix.symfony }}"
 
             -   name: "Run unit tests"
-                run: "vendor/bin/phpunit --testsuite Unit"
+                run: "vendor/bin/phpunit --testsuite unit"
 
     integration-tests:
         name: "Integration tests"
@@ -233,7 +233,7 @@ jobs:
                     SYMFONY_REQUIRE: "${{ matrix.symfony }}"
 
             -   name: "Run integration tests"
-                run: "vendor/bin/phpunit --testsuite Integration"
+                run: "vendor/bin/phpunit --testsuite integration"
 
     code-coverage:
         name: "Code Coverage"
