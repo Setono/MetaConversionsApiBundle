@@ -9,4 +9,5 @@
 /rector.php                         export-ignore
 /README.md                          export-ignore
 /UPGRADE.md                         export-ignore
+/codecov.yml                        export-ignore
 /composer-dependency-analyser.php   export-ignore
