@@ -1,0 +1,16 @@
+# Coverage is a gate, not a report: the bundle sat at 46% of lines while most of its bugs lived in the untested
+# half, so a drop should fail the pull request rather than show up as a number nobody reads
+coverage:
+    status:
+        project:
+            default:
+                target: 95%
+                # Small unavoidable dips (a new @codeCoverageIgnore, a refactor) should not block a merge
+                threshold: 1%
+        patch:
+            default:
+                target: 90%
+
+comment:
+    layout: "condensed_header, diff, files"
+    require_changes: true
