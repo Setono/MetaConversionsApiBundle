@@ -7,11 +7,11 @@ namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final readonly class QueryBasedFbcContext implements FbcContextInterface
+final class QueryBasedFbcContext implements FbcContextInterface
 {
     public function __construct(
-        private FbcContextInterface $decorated,
-        private RequestStack $requestStack,
+        private readonly FbcContextInterface $decorated,
+        private readonly RequestStack $requestStack,
     ) {
     }
 

@@ -8,9 +8,9 @@ use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final readonly class PopulateRequestPropertiesSubscriber implements EventSubscriberInterface
+final class PopulateRequestPropertiesSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
     }
 

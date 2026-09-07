@@ -18,13 +18,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * See https://developers.facebook.com/docs/marketing-api/conversions-api/parameters/fbp-and-fbc/#fbp
  */
-final readonly class StoreFbpSubscriber implements EventSubscriberInterface
+final class StoreFbpSubscriber implements EventSubscriberInterface
 {
     private const COOKIE_NAME = '_fbp';
 
     public function __construct(
-        private FbpContextInterface $fbpContext,
-        private ConsentCheckerInterface $consentChecker,
+        private readonly FbpContextInterface $fbpContext,
+        private readonly ConsentCheckerInterface $consentChecker,
     ) {
     }
 

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- PHP 8.2+ (was 7.4) and Symfony 6.4 or 7.4 (Symfony 5.4, 6.0–6.3 and 7.0–7.3 are no longer supported).
+- PHP 8.1+ (was 7.4) and Symfony 6.4 or 7.4 (Symfony 5.4, 6.0–6.3 and 7.0–7.3 are no longer supported).
 - `setono/meta-conversions-api-php-sdk` `^1.0` (was `^0.2.1`). Consequences:
     - Events are posted to Graph API **v25.0 / v26.0** (whichever `facebook/php-business-sdk` is installed) instead of
       v14.0. The payloads are unchanged.

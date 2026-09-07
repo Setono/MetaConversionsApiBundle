@@ -8,9 +8,9 @@ use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final readonly class PopulatePixelsSubscriber implements EventSubscriberInterface
+final class PopulatePixelsSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private PixelProviderInterface $pixelProvider)
+    public function __construct(private readonly PixelProviderInterface $pixelProvider)
     {
     }
 

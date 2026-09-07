@@ -13,12 +13,12 @@ use Setono\TagBag\Tag\ContentTag;
 use Setono\TagBag\TagBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final readonly class AddEventToTagBagSubscriber implements EventSubscriberInterface
+final class AddEventToTagBagSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private TagBagInterface $tagBag,
-        private FbqGeneratorInterface $fbqGenerator,
-        private ConsentCheckerInterface $consentChecker,
+        private readonly TagBagInterface $tagBag,
+        private readonly FbqGeneratorInterface $fbqGenerator,
+        private readonly ConsentCheckerInterface $consentChecker,
     ) {
     }
 

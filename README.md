@@ -9,7 +9,7 @@ Work with the Meta / Facebook Conversions API in your Symfony application. Under
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.1+
 - Symfony 6.4 or 7.4
 - A [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and [PSR-17](https://www.php-fig.org/psr/psr-17/) factories
   (see [Installation](#installation))

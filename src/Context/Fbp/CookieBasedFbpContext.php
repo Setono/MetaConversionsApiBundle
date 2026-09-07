@@ -7,11 +7,11 @@ namespace Setono\MetaConversionsApiBundle\Context\Fbp;
 use Setono\MetaConversionsApi\ValueObject\Fbp;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final readonly class CookieBasedFbpContext implements FbpContextInterface
+final class CookieBasedFbpContext implements FbpContextInterface
 {
     public function __construct(
-        private FbpContextInterface $decorated,
-        private RequestStack $requestStack,
+        private readonly FbpContextInterface $decorated,
+        private readonly RequestStack $requestStack,
     ) {
     }
 

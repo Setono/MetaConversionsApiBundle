@@ -6,12 +6,12 @@ namespace Setono\MetaConversionsApiBundle\ConsentChecker;
 
 use Setono\Consent\ConsentCheckerInterface as ThirdPartyConsentCheckerInterface;
 
-final readonly class ConsentChecker implements ConsentCheckerInterface
+final class ConsentChecker implements ConsentCheckerInterface
 {
     public function __construct(
-        private bool $consentEnabled,
-        private string $consentCategory,
-        private ?ThirdPartyConsentCheckerInterface $consentChecker,
+        private readonly bool $consentEnabled,
+        private readonly string $consentCategory,
+        private readonly ?ThirdPartyConsentCheckerInterface $consentChecker,
     ) {
     }
 

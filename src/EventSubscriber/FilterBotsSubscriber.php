@@ -8,9 +8,9 @@ use Setono\BotDetectionBundle\BotDetector\BotDetectorInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final readonly class FilterBotsSubscriber implements EventSubscriberInterface
+final class FilterBotsSubscriber implements EventSubscriberInterface
 {
-    public function __construct(private BotDetectorInterface $botDetector)
+    public function __construct(private readonly BotDetectorInterface $botDetector)
     {
     }
 

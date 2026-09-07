@@ -9,9 +9,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Exception\SessionNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-final readonly class PopulateTestEventCodePropertySubscriber implements EventSubscriberInterface
+final class PopulateTestEventCodePropertySubscriber implements EventSubscriberInterface
 {
-    public function __construct(private RequestStack $requestStack)
+    public function __construct(private readonly RequestStack $requestStack)
     {
     }
 
