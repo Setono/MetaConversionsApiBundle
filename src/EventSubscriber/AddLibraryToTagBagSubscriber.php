@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
@@ -17,12 +19,16 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
 {
+    private readonly LoggerInterface $logger;
+
     public function __construct(
         private readonly TagBagInterface $tagBag,
         private readonly FbqGeneratorInterface $fbqGenerator,
         private readonly ConsentCheckerInterface $consentChecker,
         private readonly PixelProviderInterface $pixelProvider,
+        ?LoggerInterface $logger = null,
     ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public static function getSubscribedEvents(): array
@@ -39,11 +45,15 @@ final class AddLibraryToTagBagSubscriber implements EventSubscriberInterface
         }
 
         if (!$this->consentChecker->isGranted()) {
+            $this->logger->debug('The Meta pixel library was not rendered because consent was not granted');
+
             return;
         }
 
         $pixels = $this->pixelProvider->getPixels();
         if ([] === $pixels) {
+            $this->logger->debug('The Meta pixel library was not rendered because no pixels are available. Did you configure any?');
+
             return;
         }
 

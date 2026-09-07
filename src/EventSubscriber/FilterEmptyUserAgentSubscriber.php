@@ -4,12 +4,21 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class FilterEmptyUserAgentSubscriber implements EventSubscriberInterface
 {
+    private readonly LoggerInterface $logger;
+
+    public function __construct(?LoggerInterface $logger = null)
+    {
+        $this->logger = $logger ?? new NullLogger();
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -28,6 +37,11 @@ final class FilterEmptyUserAgentSubscriber implements EventSubscriberInterface
 
         $userAgent = $event->event->userData->clientUserAgent;
         if (null === $userAgent || '' === $userAgent) {
+            $this->logger->debug('The event {event_name} ({event_id}) was dropped because the request has no user agent', [
+                'event_name' => $event->event->eventName,
+                'event_id' => $event->event->eventId,
+            ]);
+
             $event->stopPropagation();
         }
     }

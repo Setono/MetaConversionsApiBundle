@@ -7,6 +7,7 @@ namespace Setono\MetaConversionsApiBundle\Tests\Unit\EventSubscriber;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Setono\BotDetectionBundle\BotDetector\BotDetectorInterface;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
@@ -59,6 +60,25 @@ final class FilterBotsSubscriberTest extends TestCase
         $dispatcher->dispatch(new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT)), ConversionsApiEventRaised::class);
 
         self::assertFalse($enriched);
+    }
+
+    #[Test]
+    public function it_logs_why_the_event_was_dropped(): void
+    {
+        // 'why did my events stop showing up' is the number one support question, so a dropped event must say so
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())->method('debug')->with(self::stringContains('bot'));
+
+        (new FilterBotsSubscriber(self::botDetector(true), $logger))->filter(new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT)));
+    }
+
+    #[Test]
+    public function it_does_not_log_when_the_event_passes(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::never())->method(self::anything());
+
+        (new FilterBotsSubscriber(self::botDetector(false), $logger))->filter(new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT)));
     }
 
     /**

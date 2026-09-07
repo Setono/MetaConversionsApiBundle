@@ -5,18 +5,25 @@
     <services>
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterBotsSubscriber">
             <argument type="service" id="setono_bot_detection.bot_detector.default"/>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterConfiguredUserAgentsSubscriber">
             <argument>%setono_meta_conversions_api.filters.user_agent%</argument>
+            <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber">
+            <argument type="service" id="logger" on-invalid="null"/>
+
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\PopulateFbpAndFbcPropertiesSubscriber">
@@ -47,7 +54,10 @@
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StopPropagationIfNoPixelsHasBeenAddedSubscriber">
+            <argument type="service" id="logger" on-invalid="null"/>
+
             <tag name="kernel.event_subscriber"/>
+            <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">

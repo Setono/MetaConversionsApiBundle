@@ -8,6 +8,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Setono\MetaConversionsApi\Event\Event;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Setono\MetaConversionsApiBundle\EventSubscriber\FilterEmptyUserAgentSubscriber;
@@ -49,6 +50,15 @@ final class FilterEmptyUserAgentSubscriberTest extends TestCase
         (new FilterEmptyUserAgentSubscriber())->filter($event);
 
         self::assertFalse($event->isPropagationStopped());
+    }
+
+    #[Test]
+    public function it_logs_why_the_event_was_dropped(): void
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects(self::once())->method('debug')->with(self::stringContains('user agent'));
+
+        (new FilterEmptyUserAgentSubscriber($logger))->filter(new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT)));
     }
 
     /**

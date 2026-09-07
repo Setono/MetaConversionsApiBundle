@@ -212,6 +212,23 @@ final class AddCustomerToConversionsApiEvent
 You can also replace a step instead of adding to it: alias `PixelProviderInterface`, `FbpContextInterface` or
 `FbcContextInterface` to your own service, or register a listener above the corresponding populate priority.
 
+### Why did my event not show up?
+
+Every listener that drops an event says so at debug level on the `setono_meta_conversions_api` Monolog channel: the
+bot filter, the user agent filters, the no-pixels check, and each of the three consent gates. The send handler logs a
+warning when a pixel has no access token.
+
+```yaml
+# config/packages/monolog.yaml
+monolog:
+    handlers:
+        meta:
+            type: stream
+            path: '%kernel.logs_dir%/meta.log'
+            level: debug
+            channels: ['setono_meta_conversions_api']
+```
+
 ### Events that are not raised in a browser request
 
 The pipeline assumes the event belongs to the request being handled. `PopulateRequestPropertiesSubscriber` therefore
