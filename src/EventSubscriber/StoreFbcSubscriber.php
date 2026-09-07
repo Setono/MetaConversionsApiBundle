@@ -6,6 +6,8 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface;
+use Setono\MetaConversionsApiBundle\Cookie\Cookies;
+use Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -21,6 +23,7 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly FbcContextInterface $fbcContext,
         private readonly ConsentCheckerInterface $consentChecker,
+        private readonly PixelProviderInterface $pixelProvider,
     ) {
     }
 
@@ -42,6 +45,19 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $response = $event->getResponse();
+
+        // A redirect is a normal landing for an ad click, e.g. when the application strips the fbclid, so unlike
+        // the fbp cookie this one really does have to survive one
+        if (!$response->isSuccessful() && !$response->isRedirection()) {
+            return;
+        }
+
+        // There is no point in remembering a click we have nowhere to send events to
+        if ([] === $this->pixelProvider->getPixels()) {
+            return;
+        }
+
         if (!$this->consentChecker->isGranted()) {
             return;
         }
@@ -51,10 +67,10 @@ final class StoreFbcSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->getResponse()->headers->setCookie(Cookie::create(
-            '_fbc',
+        $response->headers->setCookie(Cookie::create(
+            Cookies::FBC,
             $fbc->value(),
-            new \DateTimeImmutable('+90 days'),
+            new \DateTimeImmutable(Cookies::LIFETIME),
         )->withHttpOnly(false));  // we need this to allow the js library to also use the cookie value
     }
 }

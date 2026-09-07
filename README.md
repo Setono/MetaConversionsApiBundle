@@ -84,6 +84,13 @@ setono_meta_conversions_api:
         - id: '%env(META_PIXEL_ID)%'
           access_token: '%env(META_ACCESS_TOKEN)%'
 
+    # The bundle writes the _fbp and _fbc cookies server side, so a visitor is recognised even without the
+    # browser pixel. When client side tracking is enabled the pixel writes the same cookies, so you may not need
+    # these. Both are only written on a 2xx or 3xx response, and only when at least one pixel is available
+    cookies:
+        fbp: true
+        fbc: true
+
     # The PSR-18 http client used to send events. Defaults to Symfony's default http client, which means requests
     # to Meta show up in the profiler and honour the options you configured. Point it at a scoped client to give
     # Meta its own timeout
