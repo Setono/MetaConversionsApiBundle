@@ -46,6 +46,23 @@ services:
     Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface: '@App\Provider\MyPixelProvider'
 ```
 
+## Messenger bus
+
+The bundle no longer registers a `setono_meta_conversions_api.command_bus` Messenger bus, and it no longer prepends
+anything to `framework.messenger`. `SendEvent` is dispatched on your application's default bus instead, so
+`messenger.bus.default` keeps existing and applications that define their own buses keep booting.
+
+- Routing by message class is unchanged:
+  ```yaml
+  framework:
+      messenger:
+          routing:
+              'Setono\MetaConversionsApiBundle\Message\Command\SendEvent': async
+  ```
+- If you consumed or referenced the bus by id (`messenger:consume --bus=setono_meta_conversions_api.command_bus`,
+  middleware registered on that bus, `#[AsMessageHandler(bus: ...)]`), point it at the bus you actually want.
+- To dispatch on a bus other than the default one, set `setono_meta_conversions_api.server_side.message_bus`.
+
 ## Consent handling
 
 - New option `consent.category` (default `marketing`, see `Setono\Consent\DefaultConsents`) selects the consent

@@ -73,6 +73,8 @@ setono_meta_conversions_api:
     # Server side tracking, i.e. sending the events to the Conversions API through Symfony Messenger
     server_side:
         enabled: true
+        # The Messenger bus the SendEvent command is dispatched on. Defaults to your application's default bus
+        message_bus: messenger.default_bus
 
     # The pixels to send events to (empty by default). Alternatively provide pixels from your own source by
     # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service
@@ -85,8 +87,11 @@ setono_meta_conversions_api:
         user_agent: []
 ```
 
-Server side events are dispatched on the `setono_meta_conversions_api.command_bus` Messenger bus. They are handled
-synchronously unless you route the command to a transport:
+Server side events are dispatched on your application's default Messenger bus. The bundle does not register a bus of
+its own, so your bus configuration is left untouched. Point the bundle at another bus with the `server_side.message_bus`
+option if you prefer.
+
+Events are handled synchronously unless you route the command to a transport, which is the recommended setup:
 
 ```yaml
 # config/packages/messenger.yaml
