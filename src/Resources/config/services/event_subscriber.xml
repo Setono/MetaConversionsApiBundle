@@ -63,6 +63,7 @@
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbcSubscriber">
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbc\FbcContextInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -70,6 +71,7 @@
         <service id="Setono\MetaConversionsApiBundle\EventSubscriber\StoreFbpSubscriber">
             <argument type="service" id="Setono\MetaConversionsApiBundle\Context\Fbp\FbpContextInterface"/>
             <argument type="service" id="Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface"/>
 
             <tag name="kernel.event_subscriber"/>
         </service>
