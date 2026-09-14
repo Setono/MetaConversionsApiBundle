@@ -51,6 +51,16 @@ final class ConversionsApiEventRaisedTest extends TestCase
         self::assertFalse($event->hasContext('customer'));
     }
 
+    #[Test]
+    public function it_returns_context(): void
+    {
+        $event = new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT), ['order' => 1]);
+
+        self::assertSame(1, $event->getContext('order'));
+        self::assertNull($event->getContext('customer'));
+        self::assertSame('fallback', $event->getContext('customer', 'fallback'));
+    }
+
     /**
      * The documented pipeline only holds as long as the bundle's own listeners keep their relative order, so this
      * pins it down. It is the contract integrators position their own listeners against
