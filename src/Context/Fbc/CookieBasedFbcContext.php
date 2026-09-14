@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace Setono\MetaConversionsApiBundle\Context\Fbc;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\MetaConversionsApi\ValueObject\Fbc;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class CookieBasedFbcContext implements FbcContextInterface
 {
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    private readonly LoggerInterface $logger;
+
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function getFbc(): ?Fbc
@@ -20,14 +27,22 @@ final class CookieBasedFbcContext implements FbcContextInterface
             return null;
         }
 
-        $fbc = $request->cookies->get('_fbc');
-        if (is_string($fbc)) {
-            try {
-                return Fbc::fromString($fbc);
-            } catch (\InvalidArgumentException) {
-            }
+        $cookie = $request->cookies->get('_fbc');
+        if (!is_string($cookie) || '' === $cookie) {
+            return null;
         }
 
-        return null;
+        try {
+            return Fbc::fromString($cookie);
+        } catch (\InvalidArgumentException $e) {
+            // Previously this was swallowed, which made a cookie the bundle could not read look exactly like a
+            // visitor who never clicked an ad
+            $this->logger->debug('The _fbc cookie value "{value}" could not be parsed and is ignored: {message}', [
+                'value' => $cookie,
+                'message' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
