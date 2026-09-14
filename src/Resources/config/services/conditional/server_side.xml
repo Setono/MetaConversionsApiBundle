@@ -12,8 +12,16 @@
             <tag name="monolog.logger" channel="setono_meta_conversions_api"/>
         </service>
 
+        <service id="Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface"
+                 alias="Setono\MetaConversionsApiBundle\AccessTokenResolver\ConfigurationBasedAccessTokenResolver"/>
+
+        <service id="Setono\MetaConversionsApiBundle\AccessTokenResolver\ConfigurationBasedAccessTokenResolver">
+            <argument>%setono_meta_conversions_api.pixels%</argument>
+        </service>
+
         <service id="Setono\MetaConversionsApiBundle\Message\Handler\SendEventHandler">
             <argument type="service" id="Setono\MetaConversionsApi\Client\ClientInterface"/>
+            <argument type="service" id="Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface"/>
             <argument type="service" id="logger" on-invalid="null"/>
 
             <tag name="messenger.message_handler"/>

@@ -88,7 +88,9 @@ setono_meta_conversions_api:
         message_bus: messenger.default_bus
 
     # The pixels to send events to (empty by default). Alternatively provide pixels from your own source by
-    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service.
+    # aliasing Setono\MetaConversionsApiBundle\Provider\PixelProviderInterface to your own service. If you do, alias
+    # Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface as well: the tokens your
+    # provider returns never leave the request, and the resolver is what the worker asks when it sends (see below).
     # The access token is only needed for server side tracking: client side tracking renders fbq() calls, which
     # only need the pixel id. A pixel without an access token is skipped server side, with a warning in the log
     pixels:
@@ -137,6 +139,16 @@ Every command the bundle dispatches implements
 `Setono\MetaConversionsApiBundle\Message\Command\CommandInterface`, so you can route them as a group instead.
 
 With a transport, Messenger also retries a failed send and moves it to the failure transport when it keeps failing.
+
+What ends up in the transport is the finished payload: the user data is already normalised and hashed by the SDK, and
+only pixel ids travel. Access tokens are resolved when the event is sent, through `AccessTokenResolverInterface`,
+whose default implementation reads them from the `pixels` configuration. Alias it if your pixels come from somewhere
+else:
+
+```yaml
+services:
+    Setono\MetaConversionsApiBundle\AccessTokenResolver\AccessTokenResolverInterface: '@App\Provider\MyAccessTokenResolver'
+```
 
 Either way, a send that fails is logged as an error and never propagates into the response, so an expired access
 token or an outage at Meta cannot break the page.
@@ -238,7 +250,9 @@ final class AddCustomerToConversionsApiEvent
 ```
 
 You can also replace a step instead of adding to it: alias `PixelProviderInterface`, `FbpContextInterface` or
-`FbcContextInterface` to your own service, or register a listener above the corresponding populate priority.
+`FbcContextInterface` to your own service, or register a listener above the corresponding populate priority. If you
+alias `PixelProviderInterface`, alias `AccessTokenResolverInterface` too, see
+[Route the command to a transport](#route-the-command-to-a-transport).
 
 ### Passing context to your own listeners
 
