@@ -9,6 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Setono\BotDetectionBundle\SetonoBotDetectionBundle;
 use Setono\MetaConversionsApi\Client\ClientInterface;
 use Setono\MetaConversionsApi\Event\Event;
+use Setono\MetaConversionsApi\Pixel\Pixel;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
 use Setono\MetaConversionsApiBundle\SetonoMetaConversionsApiBundle;
 use Setono\MetaConversionsApiBundle\Tests\Double\RecordingConversionsApiClientFactory;
@@ -80,8 +81,11 @@ final class PipelineTest extends KernelTestCase
         $dispatcher->dispatch(new ConversionsApiEventRaised($metaEvent), ConversionsApiEventRaised::class);
 
         // Server side: the command was dispatched, handled, and reached the client
-        self::assertCount(1, RecordingConversionsApiClientFactory::$events);
-        $sent = RecordingConversionsApiClientFactory::$events[0]->getPayload();
+        self::assertCount(1, RecordingConversionsApiClientFactory::$preparedEvents);
+        $sent = RecordingConversionsApiClientFactory::$preparedEvents[0]->payload;
+
+        // The access token is stripped before the command is dispatched and resolved again by the handler
+        self::assertEquals([new Pixel('1234', 's3cr3t')], RecordingConversionsApiClientFactory::$preparedEvents[0]->pixels);
 
         self::assertSame('ViewContent', $sent['event_name']);
         self::assertSame('https://example.com/jeans', $sent['event_source_url']);
@@ -129,7 +133,7 @@ final class PipelineTest extends KernelTestCase
 
         $dispatcher->dispatch(new ConversionsApiEventRaised(new Event(Event::EVENT_VIEW_CONTENT)), ConversionsApiEventRaised::class);
 
-        self::assertSame([], RecordingConversionsApiClientFactory::$events);
+        self::assertSame([], RecordingConversionsApiClientFactory::$preparedEvents);
         // ... and the application never spent anything enriching it
         self::assertFalse($enriched);
 

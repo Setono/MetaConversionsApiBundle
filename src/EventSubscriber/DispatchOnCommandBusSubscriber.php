@@ -43,7 +43,7 @@ final class DispatchOnCommandBusSubscriber implements EventSubscriberInterface
         }
 
         try {
-            $this->commandBus->dispatch(new SendEvent($event->event));
+            $this->commandBus->dispatch(SendEvent::fromEvent($event->event));
         } catch (\Throwable $e) {
             // Tracking must never take the page down. Two things can throw here:
             //
