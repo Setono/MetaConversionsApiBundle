@@ -22,7 +22,7 @@
       than through `sendEvent()`. If you decorate or replace `Setono\MetaConversionsApi\Client\ClientInterface`,
       implement it: a decorator that only wraps `sendEvent()` is no longer called for the events the bundle sends.
     - Until the SDK's 2.0 is stable you have to allow its pre-release in your own `composer.json`, because a stability
-      flag on a dependency's requirement is not inherited: `composer require setono/meta-conversions-api-php-sdk:^2.0@alpha`.
+      flag on a dependency's requirement is not inherited: `composer require setono/meta-conversions-api-php-sdk:^2.0@beta`.
 - `setono/consent-contracts` is now a required dependency. The consent *bundle* (`setono/consent-bundle`) remains optional.
 - `symfony/monolog-bundle` is no longer required by the bundle. The SDK client is wired to the `logger` service when
   it exists.
