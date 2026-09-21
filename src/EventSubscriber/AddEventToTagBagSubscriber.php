@@ -6,7 +6,7 @@ namespace Setono\MetaConversionsApiBundle\EventSubscriber;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Setono\MetaConversionsApi\Event\Parameters;
+use Setono\MetaConversionsApi\Event\PayloadContext;
 use Setono\MetaConversionsApi\Generator\FbqGeneratorInterface;
 use Setono\MetaConversionsApiBundle\ConsentChecker\ConsentCheckerInterface;
 use Setono\MetaConversionsApiBundle\Event\ConversionsApiEventRaised;
@@ -49,7 +49,7 @@ final class AddEventToTagBagSubscriber implements EventSubscriberInterface
         $this->tagBag->add(
             FbqInitTag::create($this->fbqGenerator->generateInit(
                 $event->event->pixels,
-                $event->event->userData->getPayload(Parameters::PAYLOAD_CONTEXT_BROWSER),
+                $event->event->userData->getPayload(PayloadContext::Browser),
             ), 100),
         );
 

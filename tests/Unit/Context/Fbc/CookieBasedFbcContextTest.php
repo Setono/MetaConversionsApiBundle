@@ -75,6 +75,14 @@ final class CookieBasedFbcContextTest extends TestCase
             0,
             1657051589577,
         ];
+
+        // The index is the number of dots in the domain the cookie is set on, so a.b.example.co.uk gives 3
+        yield 'a cookie set on a deeper domain' => [
+            'fb.3.1657051589577.IwAR0rmfgHgx',
+            'IwAR0rmfgHgx',
+            3,
+            1657051589577,
+        ];
     }
 
     #[Test]
@@ -92,7 +100,7 @@ final class CookieBasedFbcContextTest extends TestCase
         yield 'empty' => [''];
         yield 'garbage' => ['not-an-fbc-cookie'];
         yield 'wrong prefix' => ['xx.1.1657051589577.abc'];
-        yield 'invalid subdomain index' => ['fb.3.1657051589577.abc'];
+        yield 'subdomain index with a leading zero' => ['fb.03.1657051589577.abc'];
         yield 'short creation time' => ['fb.1.165705158.abc'];
         yield 'missing click id' => ['fb.1.1657051589577.'];
         yield 'creation time in the future' => ['fb.1.9999999999999.abc'];

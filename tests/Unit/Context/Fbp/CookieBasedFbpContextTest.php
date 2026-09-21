@@ -57,6 +57,9 @@ final class CookieBasedFbpContextTest extends TestCase
         // Meta's own parameter builder, and the browser pixel, append a 2 or 8 character appendix
         yield 'appendix v1' => ['fb.2.1657051589577.1088522659.AQ'];
         yield 'appendix v2' => ['fb.0.1657051589577.1088522659.AQEAAQMB'];
+
+        // The index is the number of dots in the domain the cookie is set on, so a.b.example.co.uk gives 3
+        yield 'a cookie set on a deeper domain' => ['fb.3.1657051589577.1088522659'];
     }
 
     #[Test]
@@ -76,7 +79,7 @@ final class CookieBasedFbpContextTest extends TestCase
         yield 'empty' => [''];
         yield 'garbage' => ['not-an-fbp-cookie'];
         yield 'wrong prefix' => ['xx.1.1657051589577.1088522659'];
-        yield 'invalid subdomain index' => ['fb.3.1657051589577.1088522659'];
+        yield 'subdomain index with a leading zero' => ['fb.03.1657051589577.1088522659'];
         yield 'short creation time' => ['fb.1.165705158.1088522659'];
         yield 'creation time in the future' => ['fb.1.9999999999999.1088522659'];
         yield 'non numeric random part' => ['fb.1.1657051589577.abc'];

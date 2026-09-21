@@ -15,7 +15,7 @@
         "psr/log": "^1.1 || ^2.0 || ^3.0",
         "setono/bot-detection-bundle": "^1.7",
         "setono/consent-contracts": "^1.1",
-        "setono/meta-conversions-api-php-sdk": "^2.0.0-alpha.3",
+        "setono/meta-conversions-api-php-sdk": "^2.0.0-beta.2",
         "symfony/config": "^6.4 || ^7.4",
         "symfony/dependency-injection": "^6.4 || ^7.4",
         "symfony/event-dispatcher": "^6.4 || ^7.4",
